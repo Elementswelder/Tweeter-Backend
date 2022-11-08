@@ -13,6 +13,7 @@ import edu.byu.cs.tweeter.model.domain.User;
 public class UserService {
 
     public static final String URL_PATH = "/login";
+    public static final String URL_LOGOUT = "/logout";
 
     /**
      * An observer interface to be implemented by observers who want to be notified when

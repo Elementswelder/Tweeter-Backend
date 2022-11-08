@@ -1,5 +1,6 @@
 package edu.byu.cs.tweeter.client.backgroundTask;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
@@ -28,9 +29,15 @@ public class LoginTask extends AuthenticateTask {
 
     @Override
     protected Pair<User, AuthToken> runAuthenticationTask() {
+        runTask();
         User loggedInUser = this.loggedUser;
         AuthToken authToken = this.authToken;
         return new Pair<>(loggedInUser, authToken);
+    }
+
+    protected void loadSuccessBundle(Bundle msgBundle){
+        msgBundle.putSerializable(USER_KEY, this.loggedUser);
+        msgBundle.putSerializable(AUTH_TOKEN_KEY, this.authToken);
     }
 
     @Override

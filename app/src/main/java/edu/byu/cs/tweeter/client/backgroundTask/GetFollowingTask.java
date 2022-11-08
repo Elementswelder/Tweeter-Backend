@@ -22,18 +22,28 @@ import edu.byu.cs.tweeter.util.Pair;
  */
 public class GetFollowingTask extends PagedUserTask {
 
+    public AuthToken authToken;
+    public User user;
+    public int limit;
+    public User lastFollowee;
+    public List<User> items;
+    public boolean hasMorePages;
+
     private static final String LOG_TAG = "GetFollowingTask";
     public static final String FOLLOWEES_KEY = "followees";
 
     public GetFollowingTask(AuthToken authToken, User targetUser, int limit, User lastFollowee,
                             Handler messageHandler) {
         super(authToken, targetUser, limit, lastFollowee, messageHandler);
-
+        this.authToken = authToken;
+        this.user = targetUser;
+        this.limit = limit;
+        this.lastFollowee = lastFollowee;
     }
 
     @Override
     protected Pair<List<User>, Boolean> getItems() {
-        return new Pair<>(this.items, hasMorePages);
+        return new Pair<>(this.items, this.hasMorePages);
     }
 
     @Override

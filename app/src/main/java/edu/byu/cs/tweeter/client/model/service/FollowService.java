@@ -14,7 +14,7 @@ import edu.byu.cs.tweeter.model.domain.User;
 public class FollowService {
 
     public static final String URL_PATH = "/getfollowing";
-    public static final String URL_GET_FOLLOWERS = "";
+    public static final String URL_GET_FOLLOWERS = "/getfollowers";
 
     /**
      * An observer interface to be implemented by observers who want to be notified when
