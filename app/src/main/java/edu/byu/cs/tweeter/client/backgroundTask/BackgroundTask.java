@@ -7,6 +7,7 @@ import android.util.Log;
 
 import java.io.IOException;
 
+import edu.byu.cs.tweeter.client.model.net.ServerFacade;
 import edu.byu.cs.tweeter.util.FakeData;
 
 public abstract class BackgroundTask implements Runnable {
@@ -20,6 +21,8 @@ public abstract class BackgroundTask implements Runnable {
      * Message handler that will receive task results.
      */
     private final Handler messageHandler;
+
+    protected final ServerFacade serverFacade = new ServerFacade();
 
     protected BackgroundTask(Handler messageHandler) {
         this.messageHandler = messageHandler;

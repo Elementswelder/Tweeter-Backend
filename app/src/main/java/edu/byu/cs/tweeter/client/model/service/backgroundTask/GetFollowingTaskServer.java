@@ -19,7 +19,7 @@ import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
 /**
  * Background task that retrieves a page of other users being followed by a specified user.
  */
-public class GetFollowingTask extends BackgroundTask {
+public class GetFollowingTaskServer extends BackgroundTask {
 
     private static final String LOG_TAG = "GetFollowingTask";
 
@@ -55,8 +55,8 @@ public class GetFollowingTask extends BackgroundTask {
      */
     private boolean hasMorePages;
 
-    public GetFollowingTask(FollowService followService, AuthToken authToken, User targetUser, int limit, User lastFollowee,
-                            Handler messageHandler) {
+    public GetFollowingTaskServer(FollowService followService, AuthToken authToken, User targetUser, int limit, User lastFollowee,
+                                  Handler messageHandler) {
         super(messageHandler);
         this.authToken = authToken;
         this.targetUser = targetUser;
