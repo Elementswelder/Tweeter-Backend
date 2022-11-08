@@ -18,6 +18,7 @@ public abstract class BackgroundTaskHandler<T extends ServiceObserver> extends H
         super(Looper.getMainLooper());
         this.observer = observer;
     }
+
     @Override
     public void handleMessage(@NonNull Message msg) {
         boolean success = msg.getData().getBoolean(BackgroundTask.SUCCESS_KEY);

@@ -2,8 +2,8 @@ package edu.byu.cs.tweeter.client.model.service;
 
 import java.util.List;
 
-import edu.byu.cs.tweeter.client.model.service.backgroundTask.BackgroundTaskUtils;
-import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFollowingTaskServer;
+import edu.byu.cs.tweeter.client.backgroundTask.BackgroundTaskUtils;
+import edu.byu.cs.tweeter.client.backgroundTask.GetFollowingTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetFollowingTaskHandler;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
@@ -14,6 +14,7 @@ import edu.byu.cs.tweeter.model.domain.User;
 public class FollowService {
 
     public static final String URL_PATH = "/getfollowing";
+    public static final String URL_GET_FOLLOWERS = "";
 
     /**
      * An observer interface to be implemented by observers who want to be notified when
@@ -42,19 +43,19 @@ public class FollowService {
      * @param lastFollowee the last followee returned in the previous request (can be null).
      */
     public void getFollowees(AuthToken authToken, User targetUser, int limit, User lastFollowee, GetFollowingObserver observer) {
-        GetFollowingTaskServer followingTask = getGetFollowingTask(authToken, targetUser, limit, lastFollowee, observer);
+        GetFollowingTask followingTask = getGetFollowingTask(authToken, targetUser, limit, lastFollowee, observer);
         BackgroundTaskUtils.runTask(followingTask);
     }
 
     /**
-     * Returns an instance of {@link GetFollowingTaskServer}. Allows mocking of the
+     * Returns an instance of . Allows mocking of the
      * GetFollowingTask class for testing purposes. All usages of GetFollowingTask
      * should get their instance from this method to allow for proper mocking.
      *
      * @return the instance.
      */
     // This method is public so it can be accessed by test cases
-    public GetFollowingTaskServer getGetFollowingTask(AuthToken authToken, User targetUser, int limit, User lastFollowee, GetFollowingObserver observer) {
-        return new GetFollowingTaskServer(this, authToken, targetUser, limit, lastFollowee, new GetFollowingTaskHandler(observer));
+    public GetFollowingTask getGetFollowingTask(AuthToken authToken, User targetUser, int limit, User lastFollowee, GetFollowingObserver observer) {
+        return new GetFollowingTask(authToken, targetUser, limit, lastFollowee, new GetFollowingTaskHandler(observer));
     }
 }

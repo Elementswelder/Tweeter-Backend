@@ -1,7 +1,8 @@
 package edu.byu.cs.tweeter.client.model.service;
 
-import edu.byu.cs.tweeter.client.model.service.backgroundTask.BackgroundTaskUtils;
-import edu.byu.cs.tweeter.client.model.service.backgroundTask.LoginTask;
+
+import edu.byu.cs.tweeter.client.backgroundTask.BackgroundTaskUtils;
+import edu.byu.cs.tweeter.client.backgroundTask.LoginTask;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.LoginTaskHandler;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
@@ -49,6 +50,6 @@ public class UserService {
      * @return the instance.
      */
     LoginTask getLoginTask(String username, String password, LoginObserver observer) {
-        return new LoginTask(this, username, password, new LoginTaskHandler(observer));
+        return new LoginTask(username, password, new LoginTaskHandler(observer));
     }
 }
