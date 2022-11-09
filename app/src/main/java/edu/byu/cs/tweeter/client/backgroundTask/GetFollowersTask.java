@@ -23,12 +23,23 @@ import edu.byu.cs.tweeter.util.Pair;
  */
 public class GetFollowersTask extends PagedUserTask {
 
+    public AuthToken authToken;
+    public User user;
+    public int limit;
+    public User lastFollowee;
+    public List<User> items;
+    public boolean hasMorePages;
+
     private static final String LOG_TAG = "GetFollowerTask";
     public static final String FOLLOWEES_KEY = "followers";
 
     public GetFollowersTask(AuthToken authToken, User targetUser, int limit, User lastFollower,
                             Handler messageHandler) {
         super(authToken, targetUser, limit, lastFollower, messageHandler);
+        this.authToken = authToken;
+        this.user = targetUser;
+        this.limit = limit;
+        this.lastFollowee = lastFollowee;
     }
 
     @Override
@@ -59,7 +70,7 @@ public class GetFollowersTask extends PagedUserTask {
     }
 
     protected void loadSuccessBundle(Bundle msgBundle) {
-        msgBundle.putSerializable(FOLLOWEES_KEY, (Serializable) this.items);
+        msgBundle.putSerializable(ITEMS_KEY, (Serializable) this.items);
         msgBundle.putBoolean(MORE_PAGES_KEY, this.hasMorePages);
     }
 }

@@ -47,6 +47,11 @@ public class FollowService {
         BackgroundTaskUtils.runTask(followingTask);
     }
 
+    public void getFollowers(AuthToken authToken, User targetUser, int limit, User lastFollower, GetFollowingObserver observer) {
+        GetFollowingTask followingTask = getGetFollowingTask(authToken, targetUser, limit, lastFollower, observer);
+        BackgroundTaskUtils.runTask(followingTask);
+    }
+
     /**
      * Returns an instance of . Allows mocking of the
      * GetFollowingTask class for testing purposes. All usages of GetFollowingTask

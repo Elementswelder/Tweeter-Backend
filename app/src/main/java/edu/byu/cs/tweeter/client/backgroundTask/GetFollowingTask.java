@@ -69,7 +69,7 @@ public class GetFollowingTask extends PagedUserTask {
     }
 
     protected void loadSuccessBundle(Bundle msgBundle) {
-        msgBundle.putSerializable(FOLLOWEES_KEY, (Serializable) this.items);
+        msgBundle.putSerializable(ITEMS_KEY, (Serializable) this.items);
         msgBundle.putBoolean(MORE_PAGES_KEY, this.hasMorePages);
     }
 }
