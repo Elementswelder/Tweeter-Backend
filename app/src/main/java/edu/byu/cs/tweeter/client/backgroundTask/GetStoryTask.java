@@ -8,15 +8,12 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
-import edu.byu.cs.tweeter.client.service.FollowService;
 import edu.byu.cs.tweeter.client.service.StatusService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
-import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.model.net.response.StatusResponse;
-import edu.byu.cs.tweeter.request.FollowingRequest;
 import edu.byu.cs.tweeter.request.StatusRequest;
 import edu.byu.cs.tweeter.util.Pair;
 

@@ -5,9 +5,11 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.net.response.FeedResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.model.net.response.StatusResponse;
+import edu.byu.cs.tweeter.request.FeedRequest;
 import edu.byu.cs.tweeter.request.FollowersRequest;
 import edu.byu.cs.tweeter.request.FollowingRequest;
 import edu.byu.cs.tweeter.request.StatusRequest;
@@ -64,6 +66,32 @@ public class StatusDAO {
         }
 
         return new StatusResponse(responseStatuses, hasMorePages);
+    }
+
+
+    public FeedResponse getFeed(FeedRequest request) {
+        // TODO: Generates dummy data. Replace with a real implementation.
+        assert request.getLimit() > 0;
+        assert request.getLastStatusString() != null;
+
+        List<Status> alLStatus = getFakeData().getFakeStatuses();
+        List<Status> responseStatuses = new ArrayList<>(request.getLimit());
+
+        boolean hasMorePages = false;
+
+        if(request.getLimit() > 0) {
+            if (alLStatus != null) {
+                int followeesIndex = getFolloweesStartingIndex(request.getLastStatusString(), alLStatus);
+
+                for(int limitCounter = 0; followeesIndex < alLStatus.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
+                    responseStatuses.add(alLStatus.get(followeesIndex));
+                }
+
+                hasMorePages = followeesIndex < alLStatus.size();
+            }
+        }
+
+        return new FeedResponse(responseStatuses, hasMorePages);
     }
 
     /**

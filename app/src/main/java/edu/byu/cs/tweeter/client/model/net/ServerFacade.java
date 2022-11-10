@@ -3,7 +3,10 @@ package edu.byu.cs.tweeter.client.model.net;
 import java.io.IOException;
 
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
+import edu.byu.cs.tweeter.model.net.response.FeedResponse;
+import edu.byu.cs.tweeter.model.net.response.RegisterResponse;
 import edu.byu.cs.tweeter.model.net.response.StatusResponse;
+import edu.byu.cs.tweeter.request.FeedRequest;
 import edu.byu.cs.tweeter.request.FollowersRequest;
 import edu.byu.cs.tweeter.request.FollowingRequest;
 import edu.byu.cs.tweeter.request.LoginRequest;
@@ -12,6 +15,7 @@ import edu.byu.cs.tweeter.model.net.response.FollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.model.net.response.LoginResponse;
 import edu.byu.cs.tweeter.model.net.response.LogoutResponse;
+import edu.byu.cs.tweeter.request.RegisterRequest;
 import edu.byu.cs.tweeter.request.StatusRequest;
 
 /**
@@ -40,6 +44,10 @@ public class ServerFacade {
         return clientCommunicator.doPost(urlPath, request, null, LogoutResponse.class);
     }
 
+    public RegisterResponse register(RegisterRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, RegisterResponse.class);
+    }
+
     /**
      * Returns the users that the user specified in the request is following. Uses information in
      * the request object to limit the number of followees returned and to return the next set of
@@ -62,5 +70,10 @@ public class ServerFacade {
     public StatusResponse getStatus(StatusRequest request, String urlPath)
             throws IOException, TweeterRemoteException {
         return clientCommunicator.doPost(urlPath, request, null, StatusResponse.class);
+    }
+
+    public FeedResponse getFeed(FeedRequest request, String urlPath)
+            throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, FeedResponse.class);
     }
 }
