@@ -26,7 +26,11 @@ import edu.byu.cs.tweeter.model.domain.User;
 
 public class FollowService extends ServiceHandler<Runnable>{
 
-    public void loadMoreItems(AuthToken currUserAuthToken, User user, int pageSize, User lastFollowee, PagedObserver<User> observer) {
+    public static final String URL_GET_FOLLOWERS = "/getfollowers";
+    public static final String URL = "/getfollowing";
+
+
+    public void loadMoreItemsFollowing(AuthToken currUserAuthToken, User user, int pageSize, User lastFollowee, PagedObserver<User> observer) {
         GetFollowingTask getFollowingTask = new GetFollowingTask(currUserAuthToken, user,
                 pageSize, lastFollowee, new PagedNotificationHandler<>(observer));
         startTask(getFollowingTask);
@@ -70,12 +74,12 @@ public class FollowService extends ServiceHandler<Runnable>{
     }
 
     public void updateSelectedUserFollowingAndFollowers(User selectedUser, FollowCountObserver observer) {
-        GetFollowersCountTask followersCountTask = new GetFollowersCountTask(Cache.getInstance().getCurrUserAuthToken(),
-                selectedUser, new FollowCountHandler(observer));
-        startTask(followersCountTask);
-
         GetFollowingCountTask followingCountTask = new GetFollowingCountTask(Cache.getInstance().getCurrUserAuthToken(),
                 selectedUser, new FollowCountHandler(observer));
         startTask(followingCountTask);
+
+        GetFollowersCountTask followersCountTask = new GetFollowersCountTask(Cache.getInstance().getCurrUserAuthToken(),
+                selectedUser, new FollowCountHandler(observer));
+        startTask(followersCountTask);
     }
 }

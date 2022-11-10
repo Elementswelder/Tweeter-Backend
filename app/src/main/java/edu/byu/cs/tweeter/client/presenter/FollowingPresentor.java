@@ -14,7 +14,7 @@ public class FollowingPresentor extends PagedPresenter<User>{
 
     @Override
     public void setupLoading(User user) {
-        followService.loadMoreItems(Cache.getInstance().getCurrUserAuthToken(),
+        followService.loadMoreItemsFollowing(Cache.getInstance().getCurrUserAuthToken(),
                 user, PAGE_SIZE, lastItem, new NewPagedObserver());
     }
 }

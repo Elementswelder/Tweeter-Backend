@@ -3,17 +3,20 @@ package edu.byu.cs.tweeter.server.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.response.FollowerResponse;
+import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.model.net.response.StatusResponse;
 import edu.byu.cs.tweeter.request.FollowersRequest;
 import edu.byu.cs.tweeter.request.FollowingRequest;
-import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.request.StatusRequest;
 import edu.byu.cs.tweeter.util.FakeData;
 
 /**
  * A DAO for accessing 'following' data from the database.
  */
-public class FollowDAO {
+public class StatusDAO {
 
     /**
      * Gets the count of users from the database that the user specified is following. The
@@ -22,10 +25,10 @@ public class FollowDAO {
      * @param follower the User whose count of how many following is desired.
      * @return said count.
      */
-    public Integer getFolloweeCount(User follower) {
+    public Integer getStatusesCount(User follower) {
         // TODO: uses the dummy data.  Replace with a real implementation.
         assert follower != null;
-        return getDummyFollowees().size();
+        return getStatusesCount(follower);
     }
 
     /**
@@ -38,75 +41,50 @@ public class FollowDAO {
      *                other information required to satisfy the request.
      * @return the followees.
      */
-    public FollowingResponse getFollowees(FollowingRequest request) {
+    public StatusResponse getStatuses(StatusRequest request) {
         // TODO: Generates dummy data. Replace with a real implementation.
         assert request.getLimit() > 0;
-        assert request.getFollowerAlias() != null;
+        assert request.getLastStatusString() != null;
 
-        List<User> allFollowees = getDummyFollowees();
-        List<User> responseFollowees = new ArrayList<>(request.getLimit());
+        List<Status> alLStatus = getFakeData().getFakeStatuses();
+        List<Status> responseStatuses = new ArrayList<>(request.getLimit());
 
         boolean hasMorePages = false;
 
         if(request.getLimit() > 0) {
-            if (allFollowees != null) {
-                int followeesIndex = getFolloweesStartingIndex(request.getLastFolloweeAlias(), allFollowees);
+            if (alLStatus != null) {
+                int followeesIndex = getFolloweesStartingIndex(request.getLastStatusString(), alLStatus);
 
-                for(int limitCounter = 0; followeesIndex < allFollowees.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
-                    responseFollowees.add(allFollowees.get(followeesIndex));
+                for(int limitCounter = 0; followeesIndex < alLStatus.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
+                    responseStatuses.add(alLStatus.get(followeesIndex));
                 }
 
-                hasMorePages = followeesIndex < allFollowees.size();
+                hasMorePages = followeesIndex < alLStatus.size();
             }
         }
 
-        return new FollowingResponse(responseFollowees, hasMorePages);
-    }
-
-    public FollowerResponse getFollowers(FollowersRequest request) {
-        // TODO: Generates dummy data. Replace with a real implementation.
-        assert request.getLimit() > 0;
-        assert request.getFollowerAlias() != null;
-
-        List<User> allFollowees = getDummyFollowees();
-        List<User> responseFollowees = new ArrayList<>(request.getLimit());
-
-        boolean hasMorePages = false;
-
-        if(request.getLimit() > 0) {
-            if (allFollowees != null) {
-                int followeesIndex = getFolloweesStartingIndex(request.getLastFolloweeAlias(), allFollowees);
-
-                for(int limitCounter = 0; followeesIndex < allFollowees.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
-                    responseFollowees.add(allFollowees.get(followeesIndex));
-                }
-
-                hasMorePages = followeesIndex < allFollowees.size();
-            }
-        }
-
-        return new FollowerResponse(responseFollowees, hasMorePages);
+        return new StatusResponse(responseStatuses, hasMorePages);
     }
 
     /**
-     * Determines the index for the first followee in the specified 'allFollowees' list that should
+     * Determines the index for the first followee in the specified 'allStatuses' list that should
      * be returned in the current request. This will be the index of the next followee after the
      * specified 'lastFollowee'.
      *
      * @param lastFolloweeAlias the alias of the last followee that was returned in the previous
      *                          request or null if there was no previous request.
-     * @param allFollowees the generated list of followees from which we are returning paged results.
+     * @param allStatuses the generated list of followees from which we are returning paged results.
      * @return the index of the first followee to be returned.
      */
-    private int getFolloweesStartingIndex(String lastFolloweeAlias, List<User> allFollowees) {
+    private int getFolloweesStartingIndex(String lastFolloweeAlias, List<Status> allStatuses) {
 
         int followeesIndex = 0;
 
         if(lastFolloweeAlias != null) {
             // This is a paged request for something after the first page. Find the first item
             // we should return
-            for (int i = 0; i < allFollowees.size(); i++) {
-                if(lastFolloweeAlias.equals(allFollowees.get(i).getAlias())) {
+            for (int i = 0; i < allStatuses.size(); i++) {
+                if(lastFolloweeAlias.equals(allStatuses.get(i).getPost())) {
                     // We found the index of the last item returned last time. Increment to get
                     // to the first one we should return
                     followeesIndex = i + 1;

@@ -4,10 +4,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
-import edu.byu.cs.tweeter.client.model.service.UserService;
+import edu.byu.cs.tweeter.client.service.UserService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.request.LoginRequest;
+import edu.byu.cs.tweeter.request.LoginRequest;
 import edu.byu.cs.tweeter.model.net.response.LoginResponse;
 import edu.byu.cs.tweeter.util.Pair;
 
@@ -44,7 +44,7 @@ public class LoginTask extends AuthenticateTask {
     protected void runTask() {
         try {
             LoginRequest request = new LoginRequest(username, password);
-            LoginResponse response = serverFacade.login(request, UserService.URL_PATH);
+            LoginResponse response = serverFacade.login(request, UserService.URL_LOGIN);
 
             if (response.isSuccess()) {
                 this.loggedUser = response.getUser();

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import edu.byu.cs.tweeter.client.model.net.ServerFacade;
+import edu.byu.cs.tweeter.client.service.FollowService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.util.FakeData;
@@ -51,7 +52,7 @@ public class FollowServiceTest {
     }
 
     /**
-     * A {@link FollowService.GetFollowingObserver} implementation that can be used to get the values
+     *  implementation that can be used to get the values
      * eventually returned by an asynchronous call on the {@link FollowService}. Counts down
      * on the countDownLatch so tests can wait for the background thread to call a method on the
      * observer.
