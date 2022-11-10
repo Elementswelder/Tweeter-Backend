@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.net.response.FollowerCountResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowerResponse;
+import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
+import edu.byu.cs.tweeter.request.FollowerCountRequest;
 import edu.byu.cs.tweeter.request.FollowersRequest;
+import edu.byu.cs.tweeter.request.FollowingCountRequest;
 import edu.byu.cs.tweeter.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.util.FakeData;
@@ -23,6 +27,12 @@ public class FollowDAO {
      * @return said count.
      */
     public Integer getFolloweeCount(User follower) {
+        // TODO: uses the dummy data.  Replace with a real implementation.
+        assert follower != null;
+        return getDummyFollowees().size();
+    }
+
+    public Integer getFollowerCountNum(User follower) {
         // TODO: uses the dummy data.  Replace with a real implementation.
         assert follower != null;
         return getDummyFollowees().size();
@@ -82,10 +92,21 @@ public class FollowDAO {
                 }
 
                 hasMorePages = followeesIndex < allFollowees.size();
+
             }
         }
 
         return new FollowerResponse(responseFollowees, hasMorePages);
+    }
+
+    public FollowingCountResponse getFollowingCount(FollowingCountRequest request){
+        assert request.getUser() !=null;
+        return new FollowingCountResponse(getFolloweeCount(request.getUser()), request.getAuthToken());
+    }
+
+    public FollowerCountResponse getFollowerCount(FollowerCountRequest request){
+        assert request.getUser() !=null;
+        return new FollowerCountResponse(getFollowerCountNum(request.getUser()), request.getAuthToken());
     }
 
     /**

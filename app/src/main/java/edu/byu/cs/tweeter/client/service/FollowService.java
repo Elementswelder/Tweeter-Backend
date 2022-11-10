@@ -28,6 +28,8 @@ public class FollowService extends ServiceHandler<Runnable>{
 
     public static final String URL_GET_FOLLOWERS = "/getfollowers";
     public static final String URL = "/getfollowing";
+    public static final String URL_GET_FOLLOWING_COUNT = "/getfollowingcount";
+    public static final String URL_GET_FOLLOWER_COUNT = "/getfollowerscount";
 
 
     public void loadMoreItemsFollowing(AuthToken currUserAuthToken, User user, int pageSize, User lastFollowee, PagedObserver<User> observer) {
