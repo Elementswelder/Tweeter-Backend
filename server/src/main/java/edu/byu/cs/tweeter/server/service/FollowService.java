@@ -4,14 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.net.response.FollowResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowerCountResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
+import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
+import edu.byu.cs.tweeter.model.net.response.UnfollowResponse;
+import edu.byu.cs.tweeter.request.FollowRequest;
 import edu.byu.cs.tweeter.request.FollowerCountRequest;
 import edu.byu.cs.tweeter.request.FollowersRequest;
 import edu.byu.cs.tweeter.request.FollowingCountRequest;
 import edu.byu.cs.tweeter.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.net.response.FollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.request.IsFollowerRequest;
+import edu.byu.cs.tweeter.request.UnfollowRequest;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
 import edu.byu.cs.tweeter.util.FakeData;
 
@@ -53,6 +59,18 @@ public class FollowService {
 
     public FollowerCountResponse getFollowerCount(FollowerCountRequest request) {
         return getFollowingDAO().getFollowerCount(request);
+    }
+
+    public IsFollowerResponse isFollowerResponse(IsFollowerRequest request){
+        return getFollowingDAO().isFollower(request);
+    }
+
+    public FollowResponse followUser(FollowRequest request){
+        return getFollowingDAO().followUser(request);
+    }
+
+    public UnfollowResponse unFollowUser(UnfollowRequest request){
+        return getFollowingDAO().unFollowUser(request);
     }
 
 

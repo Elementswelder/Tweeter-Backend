@@ -44,7 +44,7 @@ public class GetFollowersCountTask extends GetCountTask {
         try {
 
             FollowerCountRequest request = new FollowerCountRequest(authToken, user);
-            FollowerCountResponse response = serverFacade.getFollowerCount(request, FollowService.URL_GET_FOLLOWING_COUNT);
+            FollowerCountResponse response = serverFacade.getFollowerCount(request, FollowService.URL_GET_FOLLOWER_COUNT);
 
             if (response.isSuccess()) {
                 count = response.getCount();

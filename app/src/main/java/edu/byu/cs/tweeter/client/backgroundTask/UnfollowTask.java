@@ -1,9 +1,18 @@
 package edu.byu.cs.tweeter.client.backgroundTask;
 
 import android.os.Handler;
+import android.util.Log;
 
+import java.io.IOException;
+
+import edu.byu.cs.tweeter.client.service.FollowService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
+import edu.byu.cs.tweeter.model.net.response.FollowResponse;
+import edu.byu.cs.tweeter.model.net.response.UnfollowResponse;
+import edu.byu.cs.tweeter.request.FollowRequest;
+import edu.byu.cs.tweeter.request.UnfollowRequest;
 
 /**
  * Background task that removes a following relationship between two users.
@@ -14,6 +23,8 @@ public class UnfollowTask extends AuthenticatedTask {
      * The user that is being followed.
      */
     private final User followee;
+    private static final String LOG_TAG = "UnfollowUserTask";
+    private AuthToken authToken;
 
     public UnfollowTask(AuthToken authToken, User followee, Handler messageHandler) {
         super(authToken, messageHandler);
@@ -22,13 +33,21 @@ public class UnfollowTask extends AuthenticatedTask {
 
     @Override
     protected void runTask() {
-        // We could do this from the presenter, without a task and handler, but we will
-        // eventually access the database from here when we aren't using dummy data.
+        try {
 
-        // Call sendSuccessMessage if successful
-        sendSuccessMessage();
-        // or call sendFailedMessage if not successful
-        // sendFailedMessage()
+            UnfollowRequest request = new UnfollowRequest(authToken, followee);
+            UnfollowResponse response = serverFacade.unfollowUser(request, FollowService.URL_FOLLOW);
+
+            if (response.isSuccess()) {
+                authToken = response.getAuthToken();
+                sendSuccessMessage();
+            } else {
+                sendFailedMessage(response.getMessage());
+            }
+        } catch (IOException | TweeterRemoteException ex) {
+            Log.e(LOG_TAG, "Failed to get statuses", ex);
+
+        }
     }
 
 

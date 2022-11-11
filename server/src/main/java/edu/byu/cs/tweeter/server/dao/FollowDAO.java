@@ -2,16 +2,23 @@ package edu.byu.cs.tweeter.server.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.net.response.FollowResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowerCountResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
+import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
+import edu.byu.cs.tweeter.model.net.response.UnfollowResponse;
+import edu.byu.cs.tweeter.request.FollowRequest;
 import edu.byu.cs.tweeter.request.FollowerCountRequest;
 import edu.byu.cs.tweeter.request.FollowersRequest;
 import edu.byu.cs.tweeter.request.FollowingCountRequest;
 import edu.byu.cs.tweeter.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.request.IsFollowerRequest;
+import edu.byu.cs.tweeter.request.UnfollowRequest;
 import edu.byu.cs.tweeter.util.FakeData;
 
 /**
@@ -37,6 +44,21 @@ public class FollowDAO {
         assert follower != null;
         return getDummyFollowees().size();
     }
+
+    public IsFollowerResponse isFollower(IsFollowerRequest request){
+        assert request.getFollower() != null;
+        assert request.getFollowee() != null;
+        return new IsFollowerResponse(new Random().nextInt() > 0, request.getAuthToken());
+    }
+
+    public FollowResponse followUser(FollowRequest request){
+        return new FollowResponse(request.getAuthToken());
+    }
+
+    public UnfollowResponse unFollowUser(UnfollowRequest request){
+        return new UnfollowResponse(request.getAuthToken());
+    }
+
 
     /**
      * Gets the users from the database that the user specified in the request is following. Uses
