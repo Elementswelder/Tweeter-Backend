@@ -2,7 +2,9 @@ package edu.byu.cs.tweeter.server.service;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.net.response.GetUserResponse;
 import edu.byu.cs.tweeter.model.net.response.RegisterResponse;
+import edu.byu.cs.tweeter.request.GetUserRequest;
 import edu.byu.cs.tweeter.request.LoginRequest;
 import edu.byu.cs.tweeter.request.LogoutRequest;
 import edu.byu.cs.tweeter.model.net.response.LoginResponse;
@@ -43,6 +45,15 @@ public class UserService {
         User user = getDummyUser();
         AuthToken authToken = getDummyAuthToken();
         return new RegisterResponse(user, authToken);
+    }
+
+    public GetUserResponse getUser(GetUserRequest request){
+        if (request.getAlias() == null){
+            throw new RuntimeException("[Bad Request] Missing the Alias");
+        }
+
+        User user = getFakeData().findUserByAlias(request.getAlias());
+        return new GetUserResponse(user, request.getAuthToken());
     }
 
 

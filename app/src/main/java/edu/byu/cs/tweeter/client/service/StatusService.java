@@ -19,6 +19,7 @@ import edu.byu.cs.tweeter.model.domain.User;
 public class StatusService extends ServiceHandler<Runnable>{
 
     public static final String URL_LOAD_STATUS = "/getstory";
+    public static final String URL_POST_STATUS = "/poststatus";
 
 
     public void loadMoreStatus(AuthToken currUserAuthToken, User user, int pageSize, Status lastStatus, PagedObserver<Status> observer){

@@ -3,10 +3,12 @@ package edu.byu.cs.tweeter.server.service;
 import edu.byu.cs.tweeter.model.net.response.FeedResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.model.net.response.PostStatusResponse;
 import edu.byu.cs.tweeter.model.net.response.StatusResponse;
 import edu.byu.cs.tweeter.request.FeedRequest;
 import edu.byu.cs.tweeter.request.FollowersRequest;
 import edu.byu.cs.tweeter.request.FollowingRequest;
+import edu.byu.cs.tweeter.request.PostStatusRequest;
 import edu.byu.cs.tweeter.request.StatusRequest;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
 import edu.byu.cs.tweeter.server.dao.StatusDAO;
@@ -42,6 +44,13 @@ public class StatusService {
             throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
         }
         return getStatusDAO().getFeed(request);
+    }
+
+    public PostStatusResponse postStatus(PostStatusRequest request){
+        if (request.getStatus() == null){
+            throw new RuntimeException("[Bad Request] Request needs to have a completed status");
+        }
+        return getStatusDAO().postStatus(request);
     }
 
     StatusDAO getStatusDAO() {

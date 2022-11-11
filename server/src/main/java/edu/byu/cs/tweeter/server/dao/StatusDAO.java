@@ -8,10 +8,12 @@ import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.response.FeedResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.model.net.response.PostStatusResponse;
 import edu.byu.cs.tweeter.model.net.response.StatusResponse;
 import edu.byu.cs.tweeter.request.FeedRequest;
 import edu.byu.cs.tweeter.request.FollowersRequest;
 import edu.byu.cs.tweeter.request.FollowingRequest;
+import edu.byu.cs.tweeter.request.PostStatusRequest;
 import edu.byu.cs.tweeter.request.StatusRequest;
 import edu.byu.cs.tweeter.util.FakeData;
 
@@ -92,6 +94,12 @@ public class StatusDAO {
         }
 
         return new FeedResponse(responseStatuses, hasMorePages);
+    }
+
+    public PostStatusResponse postStatus(PostStatusRequest request){
+        assert request.getStatus() != null;
+
+        return new PostStatusResponse(request.getAuthToken());
     }
 
     /**
