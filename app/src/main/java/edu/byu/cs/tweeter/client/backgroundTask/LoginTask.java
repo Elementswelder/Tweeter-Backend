@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
-import edu.byu.cs.tweeter.client.service.UserService;
+import edu.byu.cs.tweeter.client.cache.service.UserService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.request.LoginRequest;

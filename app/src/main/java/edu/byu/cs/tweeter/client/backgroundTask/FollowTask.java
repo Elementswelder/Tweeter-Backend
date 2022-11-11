@@ -5,14 +5,12 @@ import android.util.Log;
 
 import java.io.IOException;
 
-import edu.byu.cs.tweeter.client.service.FollowService;
+import edu.byu.cs.tweeter.client.cache.service.FollowService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
 import edu.byu.cs.tweeter.model.net.response.FollowResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
 import edu.byu.cs.tweeter.request.FollowRequest;
-import edu.byu.cs.tweeter.request.FollowingCountRequest;
 
 /**
  * Background task that establishes a following relationship between two users.

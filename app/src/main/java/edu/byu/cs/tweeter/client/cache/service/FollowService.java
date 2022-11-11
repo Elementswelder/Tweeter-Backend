@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.client.service;
+package edu.byu.cs.tweeter.client.cache.service;
 
 import edu.byu.cs.tweeter.client.backgroundTask.FollowTask;
 import edu.byu.cs.tweeter.client.backgroundTask.GetFeedTask;

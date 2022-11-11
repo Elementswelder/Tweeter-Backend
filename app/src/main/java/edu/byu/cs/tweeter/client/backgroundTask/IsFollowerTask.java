@@ -5,15 +5,12 @@ import android.os.Handler;
 import android.util.Log;
 
 import java.io.IOException;
-import java.util.Random;
 
-import edu.byu.cs.tweeter.client.service.FollowService;
+import edu.byu.cs.tweeter.client.cache.service.FollowService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
-import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
 import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
-import edu.byu.cs.tweeter.request.FollowingCountRequest;
 import edu.byu.cs.tweeter.request.IsFollowerRequest;
 
 /**

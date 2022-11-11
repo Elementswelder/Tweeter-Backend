@@ -6,15 +6,12 @@ import android.util.Log;
 
 import java.io.IOException;
 
-import edu.byu.cs.tweeter.client.service.FollowService;
-import edu.byu.cs.tweeter.client.service.UserService;
+import edu.byu.cs.tweeter.client.cache.service.FollowService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
 import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
-import edu.byu.cs.tweeter.model.net.response.RegisterResponse;
 import edu.byu.cs.tweeter.request.FollowingCountRequest;
-import edu.byu.cs.tweeter.request.RegisterRequest;
 
 /**
  * Background task that queries how many other users a specified user is following.

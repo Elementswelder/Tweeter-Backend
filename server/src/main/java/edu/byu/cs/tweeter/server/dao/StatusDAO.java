@@ -57,7 +57,7 @@ public class StatusDAO {
 
         if(request.getLimit() > 0) {
             if (alLStatus != null) {
-                int followeesIndex = getFolloweesStartingIndex(request.getLastStatusString(), alLStatus);
+                int followeesIndex = getStatusStartingIndex(request.getLastStatusString(), request.getLastStatusAlias(), alLStatus);
 
                 for(int limitCounter = 0; followeesIndex < alLStatus.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
                     responseStatuses.add(alLStatus.get(followeesIndex));
@@ -120,7 +120,27 @@ public class StatusDAO {
             // This is a paged request for something after the first page. Find the first item
             // we should return
             for (int i = 0; i < allStatuses.size(); i++) {
-                if(lastFolloweeAlias.equals(allStatuses.get(i).getPost())) {
+                if(lastFolloweeAlias.equals(allStatuses.get(i).getDate())) {
+                    // We found the index of the last item returned last time. Increment to get
+                    // to the first one we should return
+                    followeesIndex = i + 1;
+                    break;
+                }
+            }
+        }
+
+        return followeesIndex;
+    }
+
+    private int getStatusStartingIndex(String lastStatusDate, String lastUserAlias, List<Status> allStatuses) {
+
+        int followeesIndex = 0;
+
+        if(lastStatusDate != null) {
+            // This is a paged request for something after the first page. Find the first item
+            // we should return
+            for (int i = 0; i < allStatuses.size(); i++) {
+                if(lastStatusDate.equals(allStatuses.get(i).getPost()) && lastUserAlias.equals(allStatuses.get(i).getUser().getAlias())) {
                     // We found the index of the last item returned last time. Increment to get
                     // to the first one we should return
                     followeesIndex = i + 1;

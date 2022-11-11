@@ -12,6 +12,7 @@ public class StatusRequest {
     private String followerAlias;
     private int limit;
     private String lastStatusString;
+    private String lastStatusAlias;
 
     /**
      * Allows construction of the object from Json. Private so it won't be called in normal code.
@@ -19,11 +20,24 @@ public class StatusRequest {
     private StatusRequest() {}
 
 
-    public StatusRequest(AuthToken authToken, String followerAlias, int limit, String lastStatusString) {
+    public StatusRequest(AuthToken authToken, String followerAlias, int limit, String lastStatusString, String lastStatusAlias) {
         this.authToken = authToken;
         this.followerAlias = followerAlias;
         this.limit = limit;
         this.lastStatusString = lastStatusString;
+        this.lastStatusAlias = lastStatusAlias;
+    }
+
+    public String getFollowerAlias() {
+        return followerAlias;
+    }
+
+    public String getLastStatusAlias() {
+        return lastStatusAlias;
+    }
+
+    public void setLastStatusAlias(String lastStatusAlias) {
+        this.lastStatusAlias = lastStatusAlias;
     }
 
     /**

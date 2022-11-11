@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
-import edu.byu.cs.tweeter.client.service.StatusService;
+import edu.byu.cs.tweeter.client.cache.service.StatusService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
@@ -50,8 +50,9 @@ public class GetStoryTask extends PagedStatusTask {
         try {
             String targetUserAlias = targetUser == null ? null : targetUser.getAlias();
             String lastStatus = lastItem == null ? null : lastItem.getPost();
+            String lastStatusAlias = lastStatus == null ? null : lastItem.getUser().getAlias();
 
-            StatusRequest request = new StatusRequest(authToken, targetUserAlias, limit, lastStatus);
+            StatusRequest request = new StatusRequest(authToken, targetUserAlias, limit, lastStatus, lastStatusAlias);
             StatusResponse response = serverFacade.getStatus(request, StatusService.URL_LOAD_STATUS);
 
             if (response.isSuccess()) {

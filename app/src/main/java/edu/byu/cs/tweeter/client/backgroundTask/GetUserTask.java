@@ -6,14 +6,11 @@ import android.util.Log;
 
 import java.io.IOException;
 
-import edu.byu.cs.tweeter.client.service.StatusService;
-import edu.byu.cs.tweeter.client.service.UserService;
+import edu.byu.cs.tweeter.client.cache.service.UserService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
-import edu.byu.cs.tweeter.model.net.response.FeedResponse;
 import edu.byu.cs.tweeter.model.net.response.GetUserResponse;
-import edu.byu.cs.tweeter.request.FeedRequest;
 import edu.byu.cs.tweeter.request.GetUserRequest;
 
 /**

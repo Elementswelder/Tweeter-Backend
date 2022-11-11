@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.client.service;
+package edu.byu.cs.tweeter.client.cache.service;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -20,6 +20,8 @@ public class StatusService extends ServiceHandler<Runnable>{
 
     public static final String URL_LOAD_STATUS = "/getstory";
     public static final String URL_POST_STATUS = "/poststatus";
+
+    private StatusService statusService;
 
 
     public void loadMoreStatus(AuthToken currUserAuthToken, User user, int pageSize, Status lastStatus, PagedObserver<Status> observer){
@@ -103,5 +105,13 @@ public class StatusService extends ServiceHandler<Runnable>{
         } else {
             return word.length();
         }
+    }
+
+    public StatusService getStatusService() {
+        if(statusService == null) {
+            statusService = new StatusService();
+        }
+
+        return statusService;
     }
 }

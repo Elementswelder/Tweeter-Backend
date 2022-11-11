@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.client.service;
+package edu.byu.cs.tweeter.client.cache.service;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

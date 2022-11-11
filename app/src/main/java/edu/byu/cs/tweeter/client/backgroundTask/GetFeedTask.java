@@ -8,15 +8,13 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
-import edu.byu.cs.tweeter.client.service.StatusService;
+import edu.byu.cs.tweeter.client.cache.service.StatusService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
 import edu.byu.cs.tweeter.model.net.response.FeedResponse;
-import edu.byu.cs.tweeter.model.net.response.StatusResponse;
 import edu.byu.cs.tweeter.request.FeedRequest;
-import edu.byu.cs.tweeter.request.StatusRequest;
 import edu.byu.cs.tweeter.util.Pair;
 
 /**
@@ -51,7 +49,7 @@ public class GetFeedTask extends PagedStatusTask {
     protected void runTask() {
         try {
             String targetUserAlias = targetUser == null ? null : targetUser.getAlias();
-            String lastStatus = lastItem == null ? null : lastItem.getPost();
+            String lastStatus = lastItem == null ? null : lastItem.getDate();
 
             FeedRequest request = new FeedRequest(authToken, targetUserAlias, limit, lastStatus);
             FeedResponse response = serverFacade.getFeed(request, StatusService.URL_LOAD_STATUS);

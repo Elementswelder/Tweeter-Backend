@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
-import edu.byu.cs.tweeter.client.service.UserService;
+import edu.byu.cs.tweeter.client.cache.service.UserService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.request.LogoutRequest;
 import edu.byu.cs.tweeter.model.net.response.LogoutResponse;
