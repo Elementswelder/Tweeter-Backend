@@ -27,6 +27,22 @@ public abstract class PagedPresenter<T> extends Presenter{
         this.view = view;
     }
 
+    public T getLastItem() {
+        return lastItem;
+    }
+
+    public void setLastItem(T lastItem) {
+        this.lastItem = lastItem;
+    }
+
+    public void setLoading(boolean loading) {
+        isLoading = loading;
+    }
+
+    public boolean isHasMorePages() {
+        return hasMorePages;
+    }
+
     public interface PagedView<T> extends View{
         void setLoadingFooter(boolean value);
         void setIntent(User user);

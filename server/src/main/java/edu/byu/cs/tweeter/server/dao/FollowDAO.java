@@ -2,10 +2,23 @@ package edu.byu.cs.tweeter.server.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
+import edu.byu.cs.tweeter.model.net.response.FollowResponse;
+import edu.byu.cs.tweeter.model.net.response.FollowerCountResponse;
+import edu.byu.cs.tweeter.model.net.response.FollowerResponse;
+import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
+import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
+import edu.byu.cs.tweeter.model.net.response.UnfollowResponse;
+import edu.byu.cs.tweeter.request.FollowRequest;
+import edu.byu.cs.tweeter.request.FollowerCountRequest;
+import edu.byu.cs.tweeter.request.FollowersRequest;
+import edu.byu.cs.tweeter.request.FollowingCountRequest;
+import edu.byu.cs.tweeter.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.request.IsFollowerRequest;
+import edu.byu.cs.tweeter.request.UnfollowRequest;
 import edu.byu.cs.tweeter.util.FakeData;
 
 /**
@@ -25,6 +38,27 @@ public class FollowDAO {
         assert follower != null;
         return getDummyFollowees().size();
     }
+
+    public Integer getFollowerCountNum(User follower) {
+        // TODO: uses the dummy data.  Replace with a real implementation.
+        assert follower != null;
+        return getDummyFollowees().size();
+    }
+
+    public IsFollowerResponse isFollower(IsFollowerRequest request){
+        assert request.getFollower() != null;
+        assert request.getFollowee() != null;
+        return new IsFollowerResponse(new Random().nextInt() > 0, request.getAuthToken());
+    }
+
+    public FollowResponse followUser(FollowRequest request){
+        return new FollowResponse(request.getAuthToken());
+    }
+
+    public UnfollowResponse unFollowUser(UnfollowRequest request){
+        return new UnfollowResponse(request.getAuthToken());
+    }
+
 
     /**
      * Gets the users from the database that the user specified in the request is following. Uses
@@ -59,6 +93,42 @@ public class FollowDAO {
         }
 
         return new FollowingResponse(responseFollowees, hasMorePages);
+    }
+
+    public FollowerResponse getFollowers(FollowersRequest request) {
+        // TODO: Generates dummy data. Replace with a real implementation.
+        assert request.getLimit() > 0;
+        assert request.getFollowerAlias() != null;
+
+        List<User> allFollowees = getDummyFollowees();
+        List<User> responseFollowees = new ArrayList<>(request.getLimit());
+
+        boolean hasMorePages = false;
+
+        if(request.getLimit() > 0) {
+            if (allFollowees != null) {
+                int followeesIndex = getFolloweesStartingIndex(request.getLastFolloweeAlias(), allFollowees);
+
+                for(int limitCounter = 0; followeesIndex < allFollowees.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
+                    responseFollowees.add(allFollowees.get(followeesIndex));
+                }
+
+                hasMorePages = followeesIndex < allFollowees.size();
+
+            }
+        }
+
+        return new FollowerResponse(responseFollowees, hasMorePages);
+    }
+
+    public FollowingCountResponse getFollowingCount(FollowingCountRequest request){
+        assert request.getUser() !=null;
+        return new FollowingCountResponse(getFolloweeCount(request.getUser()), request.getAuthToken());
+    }
+
+    public FollowerCountResponse getFollowerCount(FollowerCountRequest request){
+        assert request.getUser() !=null;
+        return new FollowerCountResponse(getFollowerCountNum(request.getUser()), request.getAuthToken());
     }
 
     /**

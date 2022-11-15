@@ -1,8 +1,8 @@
 package edu.byu.cs.tweeter.client.presenter;
 
-import edu.byu.cs.tweeter.client.service.FollowService;
-import edu.byu.cs.tweeter.client.service.StatusService;
-import edu.byu.cs.tweeter.client.service.UserService;
+import edu.byu.cs.tweeter.client.cache.service.FollowService;
+import edu.byu.cs.tweeter.client.cache.service.StatusService;
+import edu.byu.cs.tweeter.client.cache.service.UserService;
 
 
 public abstract class Presenter<T extends Presenter.View> {
