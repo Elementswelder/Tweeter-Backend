@@ -13,7 +13,7 @@ import edu.byu.cs.tweeter.server.service.StatusService;
 /**
  * An AWS lambda function that returns the users a user is following.
  */
-public class GetStatusesHandler implements RequestHandler<StatusRequest, StatusResponse> {
+public class GetStatusesHandler extends KingHandler implements RequestHandler<StatusRequest, StatusResponse> {
 
     /**
      * Returns the users that the user specified in the request is following. Uses information in
@@ -26,7 +26,7 @@ public class GetStatusesHandler implements RequestHandler<StatusRequest, StatusR
      */
     @Override
     public StatusResponse handleRequest(StatusRequest request, Context context) {
-        StatusService service = new StatusService();
+        StatusService service = new StatusService(getFactoryInterface());
         return service.getStatuses(request);
     }
 }

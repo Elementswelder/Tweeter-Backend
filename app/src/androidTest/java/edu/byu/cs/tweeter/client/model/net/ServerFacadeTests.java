@@ -66,19 +66,19 @@ public class ServerFacadeTests {
     @Test
     public void testGetFollowers() {
         FollowersRequest request = new FollowersRequest(authToken, "@allen", 10, "test");
-        FollowerResponse response;
+        FollowerResponse response = null;
 
         try {
             response = serverFacade.getFollowers(request, URL_FOLLOWERS);
             // awaitCountDownLatch();
-            assert response.isSuccess();
-            assert response.getFollowees().size() == 10;
-            assert response.getHasMorePages();
 
 
         } catch (IOException | TweeterRemoteException ex){
             ex.printStackTrace();
         }
+        assert response.isSuccess();
+        assert response.getFollowees().size() == 10;
+        assert response.getHasMorePages();
     }
 
     @Test

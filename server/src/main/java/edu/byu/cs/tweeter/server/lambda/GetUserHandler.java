@@ -13,7 +13,7 @@ import edu.byu.cs.tweeter.server.service.UserService;
 /**
  * An AWS lambda function that returns the users a user is following.
  */
-public class GetUserHandler implements RequestHandler<GetUserRequest, GetUserResponse> {
+public class GetUserHandler extends KingHandler implements RequestHandler<GetUserRequest, GetUserResponse> {
 
     /**
      * Returns the users that the user specified in the request is following. Uses information in
@@ -26,7 +26,7 @@ public class GetUserHandler implements RequestHandler<GetUserRequest, GetUserRes
      */
     @Override
     public GetUserResponse handleRequest(GetUserRequest request, Context context) {
-        UserService service = new UserService();
+        UserService service = new UserService(getFactoryInterface());
         return service.getUser(request);
     }
 }

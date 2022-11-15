@@ -11,10 +11,10 @@ import edu.byu.cs.tweeter.server.service.UserService;
  * An AWS lambda function that logs a user in and returns the user object and an auth code for
  * a successful login.
  */
-public class LogoutHandler implements RequestHandler<LogoutRequest, LogoutResponse> {
+public class LogoutHandler extends KingHandler implements RequestHandler<LogoutRequest, LogoutResponse> {
     @Override
     public LogoutResponse handleRequest(LogoutRequest logoutRequest, Context context) {
-        UserService userService = new UserService();
+        UserService userService = new UserService(getFactoryInterface());
         return userService.logout(logoutRequest);
     }
 }

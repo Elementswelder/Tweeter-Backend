@@ -10,6 +10,7 @@ import edu.byu.cs.tweeter.request.FollowersRequest;
 import edu.byu.cs.tweeter.request.FollowingRequest;
 import edu.byu.cs.tweeter.request.PostStatusRequest;
 import edu.byu.cs.tweeter.request.StatusRequest;
+import edu.byu.cs.tweeter.server.dao.DAOFactoryInterface;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
 import edu.byu.cs.tweeter.server.dao.StatusDAO;
 import edu.byu.cs.tweeter.util.FakeData;
@@ -19,6 +20,12 @@ import edu.byu.cs.tweeter.util.FakeData;
  */
 public class StatusService {
 
+    private DAOFactoryInterface factoryInterface;
+
+
+    public StatusService(DAOFactoryInterface factoryInterface){
+        this.factoryInterface = factoryInterface;
+    }
     /**
      * Returns the users that the user specified in the request is following. Uses information in
      * the request object to limit the number of followees returned and to return the next set of

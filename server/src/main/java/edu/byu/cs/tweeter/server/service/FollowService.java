@@ -18,6 +18,7 @@ import edu.byu.cs.tweeter.model.net.response.FollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.request.UnfollowRequest;
+import edu.byu.cs.tweeter.server.dao.DAOFactoryInterface;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
 import edu.byu.cs.tweeter.util.FakeData;
 
@@ -25,6 +26,14 @@ import edu.byu.cs.tweeter.util.FakeData;
  * Contains the business logic for getting the users a user is following.
  */
 public class FollowService {
+
+    private DAOFactoryInterface factoryInterface;
+
+
+    public FollowService(DAOFactoryInterface factoryInterface){
+        this.factoryInterface = factoryInterface;
+    }
+
 
     /**
      * Returns the users that the user specified in the request is following. Uses information in

@@ -12,7 +12,7 @@ import edu.byu.cs.tweeter.server.service.StatusService;
 /**
  * An AWS lambda function that returns the users a user is following.
  */
-public class GetFeedHandler implements RequestHandler<FeedRequest, FeedResponse> {
+public class GetFeedHandler extends KingHandler implements RequestHandler<FeedRequest, FeedResponse> {
 
     /**
      * Returns the users that the user specified in the request is following. Uses information in
@@ -25,7 +25,7 @@ public class GetFeedHandler implements RequestHandler<FeedRequest, FeedResponse>
      */
     @Override
     public FeedResponse handleRequest(FeedRequest request, Context context) {
-        StatusService service = new StatusService();
+        StatusService service = new StatusService(getFactoryInterface());
         return service.getFeed(request);
     }
 }

@@ -10,9 +10,18 @@ import edu.byu.cs.tweeter.request.LogoutRequest;
 import edu.byu.cs.tweeter.model.net.response.LoginResponse;
 import edu.byu.cs.tweeter.model.net.response.LogoutResponse;
 import edu.byu.cs.tweeter.request.RegisterRequest;
+import edu.byu.cs.tweeter.server.dao.DAOFactory;
+import edu.byu.cs.tweeter.server.dao.DAOFactoryInterface;
 import edu.byu.cs.tweeter.util.FakeData;
 
 public class UserService {
+
+
+    private DAOFactoryInterface factoryInterface;
+
+    public UserService(DAOFactoryInterface factoryInterface){
+        this.factoryInterface = factoryInterface;
+    }
 
     public LoginResponse login(LoginRequest request) {
         if(request.getUsername() == null){

@@ -12,7 +12,7 @@ import edu.byu.cs.tweeter.server.service.FollowService;
 /**
  * An AWS lambda function that returns the users a user is following.
  */
-public class GetFollowingCountHandler implements RequestHandler<FollowingCountRequest, FollowingCountResponse> {
+public class GetFollowingCountHandler extends KingHandler implements RequestHandler<FollowingCountRequest, FollowingCountResponse> {
 
     /**
      * Returns the users that the user specified in the request is following. Uses information in
@@ -25,7 +25,7 @@ public class GetFollowingCountHandler implements RequestHandler<FollowingCountRe
      */
     @Override
     public FollowingCountResponse handleRequest(FollowingCountRequest request, Context context) {
-        FollowService service = new FollowService();
+        FollowService service = new FollowService(getFactoryInterface());
         return service.getFollowingCount(request);
     }
 }
