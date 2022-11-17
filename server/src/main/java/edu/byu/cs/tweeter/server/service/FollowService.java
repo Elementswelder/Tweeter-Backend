@@ -1,9 +1,4 @@
 package edu.byu.cs.tweeter.server.service;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.response.FollowResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowerCountResponse;
 import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
