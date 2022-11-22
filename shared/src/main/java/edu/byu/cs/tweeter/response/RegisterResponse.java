@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.model.net.response;
+package edu.byu.cs.tweeter.response;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
@@ -7,9 +7,9 @@ import edu.byu.cs.tweeter.request.LoginRequest;
 /**
  * A response for a {@link LoginRequest}.
  */
-public class FollowingCountResponse extends Response {
+public class RegisterResponse extends Response {
 
-    private int count;
+    private User user;
     private AuthToken authToken;
 
     /**
@@ -17,7 +17,7 @@ public class FollowingCountResponse extends Response {
      *
      * @param message a message describing why the request was unsuccessful.
      */
-    public FollowingCountResponse(String message) {
+    public RegisterResponse(String message) {
         super(false, message);
     }
 
@@ -27,13 +27,19 @@ public class FollowingCountResponse extends Response {
      * @param user the now logged in user.
      * @param authToken the auth token representing this user's session with the server.
      */
-    public FollowingCountResponse(int count, AuthToken authToken) {
+    public RegisterResponse(User user, AuthToken authToken) {
         super(true, null);
-        this.count = count;
+        this.user = user;
         this.authToken = authToken;
     }
-    public int getCount(){
-        return count;
+
+    /**
+     * Returns the logged in user.
+     *
+     * @return the user.
+     */
+    public User getUser() {
+        return user;
     }
 
     /**

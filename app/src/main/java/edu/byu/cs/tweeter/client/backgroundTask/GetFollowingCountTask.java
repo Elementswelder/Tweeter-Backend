@@ -9,8 +9,8 @@ import java.io.IOException;
 import edu.byu.cs.tweeter.client.cache.service.FollowService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
-import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
+import edu.byu.cs.tweeter.model.domain.net.TweeterRemoteException;
+import edu.byu.cs.tweeter.response.FollowingCountResponse;
 import edu.byu.cs.tweeter.request.FollowingCountRequest;
 
 /**
@@ -21,7 +21,7 @@ public class   GetFollowingCountTask extends GetCountTask {
     private int count;
     private User user;
     private AuthToken authToken;
-    private static final String LOG_TAG = "GetfollowingCount";
+    private static final String LOG_TAG = "GetFollowingCount";
     public static final String COUNT_KEY = "count";
     public static final String AUTH_TOKEN_KEY = "auth-token";
 

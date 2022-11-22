@@ -1,19 +1,19 @@
 package edu.byu.cs.tweeter.server.service;
-import edu.byu.cs.tweeter.model.net.response.FollowResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowerCountResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
-import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
-import edu.byu.cs.tweeter.model.net.response.UnfollowResponse;
+import edu.byu.cs.tweeter.response.FollowResponse;
+import edu.byu.cs.tweeter.response.FollowerCountResponse;
+import edu.byu.cs.tweeter.response.FollowingCountResponse;
+import edu.byu.cs.tweeter.response.IsFollowerResponse;
+import edu.byu.cs.tweeter.response.UnfollowResponse;
 import edu.byu.cs.tweeter.request.FollowRequest;
 import edu.byu.cs.tweeter.request.FollowerCountRequest;
 import edu.byu.cs.tweeter.request.FollowersRequest;
 import edu.byu.cs.tweeter.request.FollowingCountRequest;
 import edu.byu.cs.tweeter.request.FollowingRequest;
-import edu.byu.cs.tweeter.model.net.response.FollowerResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.response.FollowerResponse;
+import edu.byu.cs.tweeter.response.FollowingResponse;
 import edu.byu.cs.tweeter.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.request.UnfollowRequest;
-import edu.byu.cs.tweeter.server.dao.DAOFactoryInterface;
+import edu.byu.cs.tweeter.server.dao.interfaces.DAOFactoryInterface;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
 import edu.byu.cs.tweeter.util.FakeData;
 

@@ -9,8 +9,8 @@ import java.io.IOException;
 import edu.byu.cs.tweeter.client.cache.service.UserService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
-import edu.byu.cs.tweeter.model.net.response.GetUserResponse;
+import edu.byu.cs.tweeter.model.domain.net.TweeterRemoteException;
+import edu.byu.cs.tweeter.response.GetUserResponse;
 import edu.byu.cs.tweeter.request.GetUserRequest;
 
 /**

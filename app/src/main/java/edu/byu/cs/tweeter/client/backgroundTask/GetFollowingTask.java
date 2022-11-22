@@ -11,9 +11,9 @@ import java.util.List;
 import edu.byu.cs.tweeter.client.cache.service.FollowService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
+import edu.byu.cs.tweeter.model.domain.net.TweeterRemoteException;
 import edu.byu.cs.tweeter.request.FollowingRequest;
-import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.response.FollowingResponse;
 import edu.byu.cs.tweeter.util.Pair;
 
 /**

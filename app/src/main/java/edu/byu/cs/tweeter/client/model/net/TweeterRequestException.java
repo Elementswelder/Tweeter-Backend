@@ -1,7 +1,7 @@
 package edu.byu.cs.tweeter.client.model.net;
 import java.util.List;
 
-import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
+import edu.byu.cs.tweeter.model.domain.net.TweeterRemoteException;
 
 public class TweeterRequestException extends TweeterRemoteException {
 

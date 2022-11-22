@@ -11,8 +11,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
-import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.model.domain.net.TweeterRemoteException;
 
 class ClientCommunicator {
 

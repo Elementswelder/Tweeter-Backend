@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.model.net.response;
+package edu.byu.cs.tweeter.response;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.request.LoginRequest;
@@ -6,9 +6,9 @@ import edu.byu.cs.tweeter.request.LoginRequest;
 /**
  * A response for a {@link LoginRequest}.
  */
-public class IsFollowerResponse extends Response {
+public class FollowingCountResponse extends Response {
 
-    private boolean isFollower;
+    private int count;
     private AuthToken authToken;
 
     /**
@@ -16,7 +16,7 @@ public class IsFollowerResponse extends Response {
      *
      * @param message a message describing why the request was unsuccessful.
      */
-    public IsFollowerResponse(String message) {
+    public FollowingCountResponse(String message) {
         super(false, message);
     }
 
@@ -26,22 +26,13 @@ public class IsFollowerResponse extends Response {
      * @param user the now logged in user.
      * @param authToken the auth token representing this user's session with the server.
      */
-    public IsFollowerResponse(boolean isFollower, AuthToken authToken) {
+    public FollowingCountResponse(int count, AuthToken authToken) {
         super(true, null);
-        this.isFollower = isFollower;
+        this.count = count;
         this.authToken = authToken;
     }
-
-    public boolean isFollower() {
-        return isFollower;
-    }
-
-    public void setFollower(boolean follower) {
-        isFollower = follower;
-    }
-
-    public void setAuthToken(AuthToken authToken) {
-        this.authToken = authToken;
+    public int getCount(){
+        return count;
     }
 
     /**

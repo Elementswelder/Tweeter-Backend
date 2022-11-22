@@ -1,4 +1,6 @@
 package edu.byu.cs.tweeter.server.dao;
 
-public class StoryDAO implements StatusDAOInterface {
+import edu.byu.cs.tweeter.server.dao.interfaces.StoryDAOInterface;
+
+public class StoryDAO implements StoryDAOInterface {
 }

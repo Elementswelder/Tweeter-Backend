@@ -8,8 +8,8 @@ import java.io.IOException;
 import edu.byu.cs.tweeter.client.cache.service.FollowService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
-import edu.byu.cs.tweeter.model.net.response.FollowResponse;
+import edu.byu.cs.tweeter.model.domain.net.TweeterRemoteException;
+import edu.byu.cs.tweeter.response.FollowResponse;
 import edu.byu.cs.tweeter.request.FollowRequest;
 
 /**

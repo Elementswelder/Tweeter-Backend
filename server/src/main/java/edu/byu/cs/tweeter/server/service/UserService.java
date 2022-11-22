@@ -2,16 +2,15 @@ package edu.byu.cs.tweeter.server.service;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.response.GetUserResponse;
-import edu.byu.cs.tweeter.model.net.response.RegisterResponse;
+import edu.byu.cs.tweeter.response.GetUserResponse;
+import edu.byu.cs.tweeter.response.RegisterResponse;
 import edu.byu.cs.tweeter.request.GetUserRequest;
 import edu.byu.cs.tweeter.request.LoginRequest;
 import edu.byu.cs.tweeter.request.LogoutRequest;
-import edu.byu.cs.tweeter.model.net.response.LoginResponse;
-import edu.byu.cs.tweeter.model.net.response.LogoutResponse;
+import edu.byu.cs.tweeter.response.LoginResponse;
+import edu.byu.cs.tweeter.response.LogoutResponse;
 import edu.byu.cs.tweeter.request.RegisterRequest;
-import edu.byu.cs.tweeter.server.dao.DAOFactory;
-import edu.byu.cs.tweeter.server.dao.DAOFactoryInterface;
+import edu.byu.cs.tweeter.server.dao.interfaces.DAOFactoryInterface;
 import edu.byu.cs.tweeter.util.FakeData;
 
 public class UserService {
@@ -49,11 +48,17 @@ public class UserService {
         } else if(request.getPassword() == null) {
             throw new RuntimeException("[Bad Request] Missing a password");
         }
+        else if (request.getFirstName() == null){
+            throw new RuntimeException("[Bad Request] Missing First Name");
+        }
+        else if (request.getFirstName() == null){
+            throw new RuntimeException("[Bad Request] Missing First Name");
+        }
+        else if (request.getImage() == null){
+            throw new RuntimeException("[Bad Request] Missing Image");
+        }
 
-        // TODO: Generates dummy data. Replace with a real implementation.
-        User user = getDummyUser();
-        AuthToken authToken = getDummyAuthToken();
-        return new RegisterResponse(user, authToken);
+        return factoryInterface.getUserDAO().registerUser(request);
     }
 
     public GetUserResponse getUser(GetUserRequest request){

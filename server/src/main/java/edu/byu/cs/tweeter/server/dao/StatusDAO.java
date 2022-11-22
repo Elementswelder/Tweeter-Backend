@@ -5,22 +5,19 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.response.FeedResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowerResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
-import edu.byu.cs.tweeter.model.net.response.PostStatusResponse;
-import edu.byu.cs.tweeter.model.net.response.StatusResponse;
+import edu.byu.cs.tweeter.response.FeedResponse;
+import edu.byu.cs.tweeter.response.PostStatusResponse;
+import edu.byu.cs.tweeter.response.StatusResponse;
 import edu.byu.cs.tweeter.request.FeedRequest;
-import edu.byu.cs.tweeter.request.FollowersRequest;
-import edu.byu.cs.tweeter.request.FollowingRequest;
 import edu.byu.cs.tweeter.request.PostStatusRequest;
 import edu.byu.cs.tweeter.request.StatusRequest;
+import edu.byu.cs.tweeter.server.dao.interfaces.StatusDAOInterface;
 import edu.byu.cs.tweeter.util.FakeData;
 
 /**
  * A DAO for accessing 'following' data from the database.
  */
-public class StatusDAO {
+public class StatusDAO implements StatusDAOInterface {
 
     /**
      * Gets the count of users from the database that the user specified is following. The

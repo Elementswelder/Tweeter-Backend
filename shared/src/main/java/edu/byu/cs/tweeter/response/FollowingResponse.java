@@ -1,18 +1,17 @@
-package edu.byu.cs.tweeter.model.net.response;
+package edu.byu.cs.tweeter.response;
 
 import java.util.List;
 import java.util.Objects;
 
-import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.request.FollowingRequest;
 
 /**
  * A paged response for a {@link FollowingRequest}.
  */
-public class StatusResponse extends PagedResponse {
+public class FollowingResponse extends PagedResponse {
 
-    private List<Status> statuses;
+    private List<User> followees;
 
     /**
      * Creates a response indicating that the corresponding request was unsuccessful. Sets the
@@ -20,19 +19,19 @@ public class StatusResponse extends PagedResponse {
      *
      * @param message a message describing why the request was unsuccessful.
      */
-    public StatusResponse(String message) {
+    public FollowingResponse(String message) {
         super(false, message, false);
     }
 
     /**
      * Creates a response indicating that the corresponding request was successful.
      *
-     * @param followers the followees to be included in the result.
+     * @param followees the followees to be included in the result.
      * @param hasMorePages an indicator of whether more data is available for the request.
      */
-    public StatusResponse(List<Status> statuses, boolean hasMorePages) {
+    public FollowingResponse(List<User> followees, boolean hasMorePages) {
         super(true, hasMorePages);
-        this.statuses = statuses;
+        this.followees = followees;
     }
 
     /**
@@ -40,8 +39,8 @@ public class StatusResponse extends PagedResponse {
      *
      * @return the followees.
      */
-    public List<Status> getStatuses() {
-        return statuses;
+    public List<User> getFollowees() {
+        return followees;
     }
 
     @Override
@@ -54,15 +53,15 @@ public class StatusResponse extends PagedResponse {
             return false;
         }
 
-        StatusResponse that = (StatusResponse) param;
+        FollowingResponse that = (FollowingResponse) param;
 
-        return (Objects.equals(statuses, that.statuses) &&
+        return (Objects.equals(followees, that.followees) &&
                 Objects.equals(this.getMessage(), that.getMessage()) &&
                 this.isSuccess() == that.isSuccess());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(statuses);
+        return Objects.hash(followees);
     }
 }

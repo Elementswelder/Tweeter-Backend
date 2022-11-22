@@ -3,10 +3,8 @@ package edu.byu.cs.tweeter.server.lambda;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
-import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.response.FollowingCountResponse;
 import edu.byu.cs.tweeter.request.FollowingCountRequest;
-import edu.byu.cs.tweeter.request.FollowingRequest;
 import edu.byu.cs.tweeter.server.service.FollowService;
 
 /**

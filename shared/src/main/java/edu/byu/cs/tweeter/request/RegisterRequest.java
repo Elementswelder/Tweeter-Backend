@@ -1,5 +1,7 @@
 package edu.byu.cs.tweeter.request;
 
+
+
 /**
  * Contains all the information needed to make a login request.
  */
@@ -35,6 +37,7 @@ public class RegisterRequest {
      *
      * @return the username.
      */
+
     public String getUsername() {
         return username;
     }

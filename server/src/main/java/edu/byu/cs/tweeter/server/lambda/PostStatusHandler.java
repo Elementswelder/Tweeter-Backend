@@ -3,9 +3,7 @@ package edu.byu.cs.tweeter.server.lambda;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
-import edu.byu.cs.tweeter.model.net.response.FeedResponse;
-import edu.byu.cs.tweeter.model.net.response.PostStatusResponse;
-import edu.byu.cs.tweeter.request.FeedRequest;
+import edu.byu.cs.tweeter.response.PostStatusResponse;
 import edu.byu.cs.tweeter.request.PostStatusRequest;
 import edu.byu.cs.tweeter.server.service.StatusService;
 

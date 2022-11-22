@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.model.net;
+package edu.byu.cs.tweeter.model.domain.net;
 
 import java.util.List;
 

@@ -32,6 +32,10 @@ android {
             useJUnitPlatform()
         }
     }
+
+    packagingOptions {
+        resources.excludes.add("META-INF/*")
+    }
 }
 
 dependencies {
@@ -47,6 +51,8 @@ dependencies {
 
     // Image management
     implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'com.amazonaws:aws-java-sdk-core:1.12.343'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.343'
 
     /**
      * Testing related dependencies

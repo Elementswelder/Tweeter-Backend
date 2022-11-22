@@ -1,4 +1,6 @@
 package edu.byu.cs.tweeter.server.dao;
 
-public class S3DAO {
+import edu.byu.cs.tweeter.server.dao.interfaces.S3DAOInterface;
+
+public class S3DAO implements S3DAOInterface {
 }

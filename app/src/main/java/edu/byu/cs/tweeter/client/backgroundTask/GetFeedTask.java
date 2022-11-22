@@ -12,8 +12,8 @@ import edu.byu.cs.tweeter.client.cache.service.StatusService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
-import edu.byu.cs.tweeter.model.net.response.FeedResponse;
+import edu.byu.cs.tweeter.model.domain.net.TweeterRemoteException;
+import edu.byu.cs.tweeter.response.FeedResponse;
 import edu.byu.cs.tweeter.request.FeedRequest;
 import edu.byu.cs.tweeter.util.Pair;
 

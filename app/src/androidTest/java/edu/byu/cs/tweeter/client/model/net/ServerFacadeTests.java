@@ -9,11 +9,11 @@ import java.util.concurrent.CountDownLatch;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
-import edu.byu.cs.tweeter.model.net.response.FollowerCountResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowerResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowingCountResponse;
-import edu.byu.cs.tweeter.model.net.response.RegisterResponse;
+import edu.byu.cs.tweeter.model.domain.net.TweeterRemoteException;
+import edu.byu.cs.tweeter.response.FollowerCountResponse;
+import edu.byu.cs.tweeter.response.FollowerResponse;
+import edu.byu.cs.tweeter.response.FollowingCountResponse;
+import edu.byu.cs.tweeter.response.RegisterResponse;
 import edu.byu.cs.tweeter.request.FollowerCountRequest;
 import edu.byu.cs.tweeter.request.FollowersRequest;
 import edu.byu.cs.tweeter.request.FollowingCountRequest;

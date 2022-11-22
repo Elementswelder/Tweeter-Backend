@@ -3,9 +3,7 @@ package edu.byu.cs.tweeter.server.lambda;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
-import edu.byu.cs.tweeter.model.net.response.FollowResponse;
-import edu.byu.cs.tweeter.model.net.response.UnfollowResponse;
-import edu.byu.cs.tweeter.request.FollowRequest;
+import edu.byu.cs.tweeter.response.UnfollowResponse;
 import edu.byu.cs.tweeter.request.UnfollowRequest;
 import edu.byu.cs.tweeter.server.service.FollowService;
 

@@ -1,16 +1,12 @@
 package edu.byu.cs.tweeter.server.service;
 
-import edu.byu.cs.tweeter.model.net.response.FeedResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowerResponse;
-import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
-import edu.byu.cs.tweeter.model.net.response.PostStatusResponse;
-import edu.byu.cs.tweeter.model.net.response.StatusResponse;
+import edu.byu.cs.tweeter.response.FeedResponse;
+import edu.byu.cs.tweeter.response.PostStatusResponse;
+import edu.byu.cs.tweeter.response.StatusResponse;
 import edu.byu.cs.tweeter.request.FeedRequest;
-import edu.byu.cs.tweeter.request.FollowersRequest;
-import edu.byu.cs.tweeter.request.FollowingRequest;
 import edu.byu.cs.tweeter.request.PostStatusRequest;
 import edu.byu.cs.tweeter.request.StatusRequest;
-import edu.byu.cs.tweeter.server.dao.DAOFactoryInterface;
+import edu.byu.cs.tweeter.server.dao.interfaces.DAOFactoryInterface;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
 import edu.byu.cs.tweeter.server.dao.StatusDAO;
 import edu.byu.cs.tweeter.util.FakeData;
