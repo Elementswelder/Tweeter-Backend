@@ -26,7 +26,7 @@ public class StatusResponse extends PagedResponse {
     /**
      * Creates a response indicating that the corresponding request was successful.
      *
-     * 
+     *
      * @param hasMorePages an indicator of whether more data is available for the request.
      */
     public StatusResponse(List<Status> statuses, boolean hasMorePages) {

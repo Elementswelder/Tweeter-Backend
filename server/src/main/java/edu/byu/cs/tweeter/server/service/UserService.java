@@ -1,5 +1,7 @@
 package edu.byu.cs.tweeter.server.service;
 
+import com.amazonaws.Response;
+
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.response.GetUserResponse;
@@ -57,8 +59,16 @@ public class UserService {
         else if (request.getImage() == null){
             throw new RuntimeException("[Bad Request] Missing Image");
         }
+        RegisterResponse response = factoryInterface.getUserDAO().registerUser(request);
 
-        return factoryInterface.getUserDAO().registerUser(request);
+        //If response succeeds, then add the authtoken to the table with the date
+        if (response.isSuccess()){
+            //If not added the authtoken to the table, fail the request
+            if (!factoryInterface.getAuthTokenDAO().addAuthToken(response.getAuthToken().getToken(), response.getAuthToken().getDatetime(), request.getUsername())){
+                return new RegisterResponse("FAILED TO ADD AUTH TOKEN TO THE TABLE");
+            }
+        }
+        return response;
     }
 
     public GetUserResponse getUser(GetUserRequest request){
@@ -68,6 +78,11 @@ public class UserService {
 
         User user = getFakeData().findUserByAlias(request.getAlias());
         return new GetUserResponse(user, request.getAuthToken());
+    }
+
+    private String hashPassword(String password){
+
+        return null;
     }
 
 

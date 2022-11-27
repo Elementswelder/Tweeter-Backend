@@ -48,5 +48,8 @@ public class DAOFactory implements DAOFactoryInterface {
         return new S3DAO();
     }
 
+    @Override
+    public AuthTokenDAO getAuthTokenDAO() { return (AuthTokenDAO) authTokenDAOInterface;}
+
 
 }

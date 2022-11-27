@@ -1,5 +1,6 @@
 package edu.byu.cs.tweeter.server.dao.interfaces;
 
+import edu.byu.cs.tweeter.server.dao.AuthTokenDAO;
 import edu.byu.cs.tweeter.server.dao.FeedDAO;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
 import edu.byu.cs.tweeter.server.dao.S3DAO;
@@ -20,4 +21,6 @@ public interface DAOFactoryInterface {
     abstract StoryDAO getStoryDAO();
 
     abstract S3DAO getS3DAO();
+
+    abstract AuthTokenDAO getAuthTokenDAO();
 }

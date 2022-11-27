@@ -7,7 +7,7 @@ public class KingHandler {
 
     protected DAOFactoryInterface factoryInterface;
 
-    protected DAOFactoryInterface getFactoryInterface() {
+    public DAOFactoryInterface getFactoryInterface() {
         if (factoryInterface == null) {
             factoryInterface = new DAOFactory();
         }
