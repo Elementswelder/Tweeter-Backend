@@ -19,6 +19,8 @@ import java.util.UUID;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.request.GetUserRequest;
+import edu.byu.cs.tweeter.response.GetUserResponse;
 import edu.byu.cs.tweeter.response.LoginResponse;
 import edu.byu.cs.tweeter.response.RegisterResponse;
 import edu.byu.cs.tweeter.request.LoginRequest;
@@ -26,6 +28,7 @@ import edu.byu.cs.tweeter.request.RegisterRequest;
 import edu.byu.cs.tweeter.server.dao.interfaces.UserDAOInterface;
 import edu.byu.cs.tweeter.server.dao.pojobeans.UserTableBean;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
 
@@ -41,8 +44,7 @@ public class UserDAO extends KingDAO implements UserDAOInterface {
             InputStream target = new ByteArrayInputStream(request.getImage().getBytes(StandardCharsets.UTF_8));
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(request.getImage().length());
-            metadata.setContentType("image/png");
-
+            metadata.setContentType("image/jpeg");
             gets3Client().putObject(new PutObjectRequest(s3BucketName, request.getUsername(), target, metadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
 
@@ -68,6 +70,39 @@ public class UserDAO extends KingDAO implements UserDAOInterface {
 
     @Override
     public LoginResponse loginUser(LoginRequest request) {
-        return null;
+        try {
+            DynamoDbTable<UserTableBean> loginTable = getDbClient().table("UserTable", TableSchema.fromBean(UserTableBean.class));
+            Key key = Key.builder().partitionValue(request.getUsername()).build();
+            UserTableBean user = loginTable.getItem(key);
+            if (user != null){
+                if (Hasher.validatePassword(request.getPassword(), user.getPassword())){
+                    User newUser = new User(user.firstName, user.lastName, user.alias, gets3Client().getUrl(s3BucketName, request.getUsername()).toString());
+                    SimpleDateFormat format = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
+                    return new LoginResponse(newUser, new AuthToken(UUID.randomUUID().toString(), format.format(new Date())));
+                }
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
+            return new LoginResponse("FAILED TO FIND A MATCHING USER IN THE DATABASE");
+        }
+        return new LoginResponse("FAILED TO LOGIN - GENERIC USER-DAO");
+    }
+
+
+    @Override
+    public GetUserResponse getUser(GetUserRequest request) {
+        try {
+            DynamoDbTable<UserTableBean> loginTable = getDbClient().table("UserTable", TableSchema.fromBean(UserTableBean.class));
+            Key key = Key.builder().partitionValue(request.getAlias()).build();
+            UserTableBean user = loginTable.getItem(key);
+            if (user != null){
+                User newUser = new User(user.firstName, user.lastName, user.alias, gets3Client().getUrl(s3BucketName, request.getAlias()).toString());
+                return new GetUserResponse(newUser, request.getAuthToken());
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
+            return new GetUserResponse("FAILED TO FIND A MATCHING USER IN THE DATABASE");
+        }
+        return new GetUserResponse("FAILED TO GET USER - GENERIC getUser");
     }
 }

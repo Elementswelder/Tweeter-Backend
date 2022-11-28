@@ -2,6 +2,9 @@ package edu.byu.cs.tweeter.server.service;
 
 import com.amazonaws.Response;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.response.GetUserResponse;
@@ -12,6 +15,7 @@ import edu.byu.cs.tweeter.request.LogoutRequest;
 import edu.byu.cs.tweeter.response.LoginResponse;
 import edu.byu.cs.tweeter.response.LogoutResponse;
 import edu.byu.cs.tweeter.request.RegisterRequest;
+import edu.byu.cs.tweeter.server.dao.Hasher;
 import edu.byu.cs.tweeter.server.dao.interfaces.DAOFactoryInterface;
 import edu.byu.cs.tweeter.util.FakeData;
 
@@ -31,10 +35,19 @@ public class UserService {
             throw new RuntimeException("[Bad Request] Missing a password");
         }
 
-        // TODO: Generates dummy data. Replace with a real implementation.
-        User user = getDummyUser();
-        AuthToken authToken = getDummyAuthToken();
-        return new LoginResponse(user, authToken);
+        //UNCOMMENT ON RELEASE
+       LoginResponse response = factoryInterface.getUserDAO().loginUser(request);
+        if (response.isSuccess()){
+            //If not added the authtoken to the table, fail the request
+            if (!factoryInterface.getAuthTokenDAO().addAuthToken(response.getAuthToken().getToken(), response.getAuthToken().getDatetime(), request.getUsername())){
+                return new LoginResponse("FAILED TO ADD AUTH TOKEN TO THE TABLE - LOGIN");
+            }
+        }
+        return response;
+
+
+       // User user = getFakeData().getFirstUser();
+       // return new LoginResponse(user, getDummyAuthToken());
     }
 
     public LogoutResponse logout(LogoutRequest request){
@@ -59,13 +72,14 @@ public class UserService {
         else if (request.getImage() == null){
             throw new RuntimeException("[Bad Request] Missing Image");
         }
+        //HashPassword before continuing
+        request.setPassword(Hasher.generateStrongPasswordHash(request.getPassword()));
         RegisterResponse response = factoryInterface.getUserDAO().registerUser(request);
-
         //If response succeeds, then add the authtoken to the table with the date
         if (response.isSuccess()){
             //If not added the authtoken to the table, fail the request
             if (!factoryInterface.getAuthTokenDAO().addAuthToken(response.getAuthToken().getToken(), response.getAuthToken().getDatetime(), request.getUsername())){
-                return new RegisterResponse("FAILED TO ADD AUTH TOKEN TO THE TABLE");
+                return new RegisterResponse("FAILED TO ADD AUTH TOKEN TO THE TABLE - REGISTER");
             }
         }
         return response;
@@ -80,10 +94,6 @@ public class UserService {
         return new GetUserResponse(user, request.getAuthToken());
     }
 
-    private String hashPassword(String password){
-
-        return null;
-    }
 
 
     /**

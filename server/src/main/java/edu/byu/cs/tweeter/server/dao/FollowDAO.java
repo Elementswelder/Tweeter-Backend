@@ -1,8 +1,10 @@
 package edu.byu.cs.tweeter.server.dao;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.response.FollowResponse;
@@ -20,31 +22,25 @@ import edu.byu.cs.tweeter.response.FollowingResponse;
 import edu.byu.cs.tweeter.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.request.UnfollowRequest;
 import edu.byu.cs.tweeter.server.dao.interfaces.FollowDAOInterface;
+import edu.byu.cs.tweeter.server.dao.pojobeans.UserTableBean;
 import edu.byu.cs.tweeter.util.FakeData;
-
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbIndex;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 /**
  * A DAO for accessing 'following' data from the database.
  */
-public class FollowDAO implements FollowDAOInterface {
+public class FollowDAO extends KingDAO implements FollowDAOInterface {
 
     /**
      * Gets the count of users from the database that the user specified is following. The
      * current implementation uses generated data and doesn't actually access a database.
      *
-     * @param follower the User whose count of how many following is desired.
      * @return said count.
      */
-    public Integer getFolloweeCount(User follower) {
-        // TODO: uses the dummy data.  Replace with a real implementation.
-        assert follower != null;
-        return getDummyFollowees().size();
-    }
-
-    public Integer getFollowerCountNum(User follower) {
-        // TODO: uses the dummy data.  Replace with a real implementation.
-        assert follower != null;
-        return getDummyFollowees().size();
-    }
 
     public IsFollowerResponse isFollower(IsFollowerRequest request){
         assert request.getFollower() != null;
@@ -124,12 +120,71 @@ public class FollowDAO implements FollowDAOInterface {
 
     public FollowingCountResponse getFollowingCount(FollowingCountRequest request){
         assert request.getUser() !=null;
-        return new FollowingCountResponse(getFolloweeCount(request.getUser()), request.getAuthToken());
+        return new FollowingCountResponse(getFollowerCountNum(request.getUser()), request.getAuthToken());
     }
 
     public FollowerCountResponse getFollowerCount(FollowerCountRequest request){
         assert request.getUser() !=null;
-        return new FollowerCountResponse(getFollowerCountNum(request.getUser()), request.getAuthToken());
+        if (!checkValidAuth(request.getAuthToken().getToken())){
+            return new FollowerCountResponse("AuthToken Expired, please log in again");
+        }
+
+        int followeeCount = getFolloweeCount(request.getUser());
+        System.out.println("follow count debug - " + followeeCount);
+        if (followeeCount == -1){
+            return new FollowerCountResponse("COULD NOT FIND THE USER IN THE DATABASE");
+        }
+        return new FollowerCountResponse(followeeCount, request.getAuthToken());
+    }
+
+    public Integer getFolloweeCount(User follower) {
+        assert follower != null;
+        try {
+            DynamoDbTable<org.example.FollowsTableBean> followeeCountTable = getDbClient().table("follows", TableSchema.fromBean(org.example.FollowsTableBean.class));
+
+            QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
+                    .queryConditional(QueryConditional.keyEqualTo(Key.builder()
+                            .partitionValue(follower.getAlias())
+                            .build()))
+                    .scanIndexForward(true);
+
+            QueryEnhancedRequest request = requestBuilder.build();
+
+            List<org.example.FollowsTableBean> result = followeeCountTable.query(request)
+                    .items()
+                    .stream()
+                    .collect(Collectors.toList());
+
+            System.out.println(result.size());
+
+            return result.size();
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+            return -1;
+        }
+    }
+
+    public Integer getFollowerCountNum(User follower) {
+        // TODO: uses the dummy data.  Replace with a real implementation.
+        assert follower != null;
+        try {
+            DynamoDbIndex<org.example.FollowsTableBean> followerCountTable = getDbClient().table("follows", TableSchema.fromBean(org.example.FollowsTableBean.class)).index("followee_handle-follower_handle-index");
+            QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
+                    .queryConditional(QueryConditional.keyEqualTo(Key.builder()
+                            .build()));
+
+
+            Iterator<org.example.FollowsTableBean> feedResults = (Iterator<org.example.FollowsTableBean>) followerCountTable.query(requestBuilder);
+
+            System.out.println(result.size());
+
+            return result.size();
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+            return -1;
+        }
     }
 
     /**

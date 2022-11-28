@@ -61,8 +61,9 @@ public class FollowService {
         return getFollowingDAO().getFollowingCount(request);
     }
 
+    //The people following the user;
     public FollowerCountResponse getFollowerCount(FollowerCountRequest request) {
-        return getFollowingDAO().getFollowerCount(request);
+        return factoryInterface.getFollowDAO().getFollowerCount(request);
     }
 
     public IsFollowerResponse isFollowerResponse(IsFollowerRequest request){

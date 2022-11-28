@@ -2,6 +2,7 @@ package edu.byu.cs.tweeter.server.dao.pojobeans;
 
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
 @DynamoDbBean
 public class AuthTokenBean {
@@ -35,6 +36,7 @@ public class AuthTokenBean {
         this.date = date;
     }
 
+    @DynamoDbSortKey
     public String getAlias() {
         return alias;
     }
