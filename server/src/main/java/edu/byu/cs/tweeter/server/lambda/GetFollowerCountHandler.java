@@ -3,9 +3,11 @@ package edu.byu.cs.tweeter.server.lambda;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
+import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.response.FollowerCountResponse;
 import edu.byu.cs.tweeter.request.FollowerCountRequest;
 import edu.byu.cs.tweeter.server.service.FollowService;
+import edu.byu.cs.tweeter.server.service.UserService;
 
 /**
  * An AWS lambda function that returns the users a user is following.
@@ -23,7 +25,7 @@ public class GetFollowerCountHandler extends KingHandler implements RequestHandl
      */
     @Override
     public FollowerCountResponse handleRequest(FollowerCountRequest request, Context context) {
-        FollowService service = new FollowService(getFactoryInterface());
+        UserService service = new UserService(getFactoryInterface());
         return service.getFollowerCount(request);
     }
 }

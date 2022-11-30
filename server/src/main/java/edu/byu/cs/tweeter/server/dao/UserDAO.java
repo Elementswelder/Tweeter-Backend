@@ -14,12 +14,17 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.request.FollowerCountRequest;
+import edu.byu.cs.tweeter.request.FollowingCountRequest;
 import edu.byu.cs.tweeter.request.GetUserRequest;
+import edu.byu.cs.tweeter.response.FollowerCountResponse;
+import edu.byu.cs.tweeter.response.FollowingCountResponse;
 import edu.byu.cs.tweeter.response.GetUserResponse;
 import edu.byu.cs.tweeter.response.LoginResponse;
 import edu.byu.cs.tweeter.response.RegisterResponse;
@@ -41,10 +46,11 @@ public class UserDAO extends KingDAO implements UserDAOInterface {
         System.out.println("Trying to upload to S3 Bucket");
         try {
             //Convert the image and push it as a public image
-            InputStream target = new ByteArrayInputStream(request.getImage().getBytes(StandardCharsets.UTF_8));
+            byte[] bytes = Base64.getDecoder().decode(request.getImage());
+            InputStream target = new ByteArrayInputStream(bytes);
             ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(request.getImage().length());
-            metadata.setContentType("image/jpeg");
+            metadata.setContentLength(bytes.length);
+            metadata.setContentType("image/png");
             gets3Client().putObject(new PutObjectRequest(s3BucketName, request.getUsername(), target, metadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
 
@@ -55,7 +61,7 @@ public class UserDAO extends KingDAO implements UserDAOInterface {
         try {
             System.out.println("Trying to get into dynamo tables");
             DynamoDbTable<UserTableBean> followsDynamoDbTable = getDbClient().table("UserTable", TableSchema.fromBean(UserTableBean.class));
-            UserTableBean user =  new UserTableBean(request.getUsername(), request.getFirstName(), request.getLastName(), request.getImage(), request.getPassword());
+            UserTableBean user =  new UserTableBean(request.getUsername(), request.getFirstName(), request.getLastName(), request.getImage(), request.getPassword(), 0, 0);
             followsDynamoDbTable.putItem(user);
 
         } catch (Exception ex){
@@ -105,4 +111,33 @@ public class UserDAO extends KingDAO implements UserDAOInterface {
         }
         return new GetUserResponse("FAILED TO GET USER - GENERIC getUser");
     }
+
+    public FollowingCountResponse getFollowingCount(FollowingCountRequest request){
+        assert request.getUser() !=null;
+        UserTableBean user = null;
+        try {
+            DynamoDbTable<UserTableBean> followingCount = getDbClient().table("UserTable", TableSchema.fromBean(UserTableBean.class));
+            Key key = Key.builder().partitionValue(request.getUser().getAlias()).build();
+            user = followingCount.getItem(key);
+            return new FollowingCountResponse(user.getFollowing(), request.getAuthToken());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new FollowingCountResponse("FAILED TO FIND A USER IN THE DATABASE - GET FOLLOWING COUNT");
+        }
+    }
+
+    public FollowerCountResponse getFollowerCount(FollowerCountRequest request) {
+        assert request.getUser() != null;
+        UserTableBean user = null;
+        try {
+            DynamoDbTable<UserTableBean> followerCountTable = getDbClient().table("UserTable", TableSchema.fromBean(UserTableBean.class));
+            Key key = Key.builder().partitionValue(request.getUser().getAlias()).build();
+            user = followerCountTable.getItem(key);
+            return new FollowerCountResponse(user.getFollowers(), request.getAuthToken());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new FollowerCountResponse("FAILED TO FIND A USER IN THE DATABASE - GET FOLLOWER COUNT");
+        }
+    }
+
 }

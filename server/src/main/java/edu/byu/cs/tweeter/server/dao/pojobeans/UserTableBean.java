@@ -11,15 +11,21 @@ public class UserTableBean {
     public String lastName;
     public String image;
     public String password;
+    public int followers;
+    public int following;
+
 
     public UserTableBean(){}
 
-    public UserTableBean(String userAlias, String firstName, String lastName, String image, String password){
+    public UserTableBean(String userAlias, String firstName, String lastName, String image,
+                         String password, int followers, int following){
         this.firstName = firstName;
         this.image = image;
         this.alias = userAlias;
         this.lastName = lastName;
         this.password = password;
+        this.followers = followers;
+        this.following = following;
     }
 
     @DynamoDbPartitionKey
@@ -61,5 +67,21 @@ public class UserTableBean {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public int getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(int followers) {
+        this.followers = followers;
+    }
+
+    public int getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(int following) {
+        this.following = following;
     }
 }

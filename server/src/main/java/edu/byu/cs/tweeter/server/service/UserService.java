@@ -7,6 +7,10 @@ import java.security.spec.InvalidKeySpecException;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.request.FollowerCountRequest;
+import edu.byu.cs.tweeter.request.FollowingCountRequest;
+import edu.byu.cs.tweeter.response.FollowerCountResponse;
+import edu.byu.cs.tweeter.response.FollowingCountResponse;
 import edu.byu.cs.tweeter.response.GetUserResponse;
 import edu.byu.cs.tweeter.response.RegisterResponse;
 import edu.byu.cs.tweeter.request.GetUserRequest;
@@ -17,6 +21,7 @@ import edu.byu.cs.tweeter.response.LogoutResponse;
 import edu.byu.cs.tweeter.request.RegisterRequest;
 import edu.byu.cs.tweeter.server.dao.Hasher;
 import edu.byu.cs.tweeter.server.dao.interfaces.DAOFactoryInterface;
+import edu.byu.cs.tweeter.server.dao.pojobeans.UserTableBean;
 import edu.byu.cs.tweeter.util.FakeData;
 
 public class UserService {
@@ -51,8 +56,9 @@ public class UserService {
     }
 
     public LogoutResponse logout(LogoutRequest request){
-        if (request.getAuthToken() == null){
-            throw new RuntimeException("[Bad Request] Missing authtoken");
+        boolean success = factoryInterface.getAuthTokenDAO().expireAuthToken(request.getAuthToken().getToken());
+        if (!success){
+            return new LogoutResponse("FAILED TO UPDATE THE AUTH TOKEN");
         }
         return new LogoutResponse();
     }
@@ -86,42 +92,37 @@ public class UserService {
     }
 
     public GetUserResponse getUser(GetUserRequest request){
+        // if (!checkValidAuth(request.getAuthToken().getToken())){
+        //   return new GetUserResponse("AuthToken Expired, please log in again");
+        //}
         if (request.getAlias() == null){
             throw new RuntimeException("[Bad Request] Missing the Alias");
         }
+        GetUserResponse response = factoryInterface.getUserDAO().getUser(request);
+        if (!response.isSuccess()){
+            return new GetUserResponse("FAILED TO FIND THE USER - GET USER");
+        }
+        return response;
+    }
 
-        User user = getFakeData().findUserByAlias(request.getAlias());
-        return new GetUserResponse(user, request.getAuthToken());
+    public FollowingCountResponse getFollowingCount(FollowingCountRequest request) {
+        // if (!checkValidAuth(request.getAuthToken().getToken())){
+        //   return new FollowingCountResponse("AuthToken Expired, please log in again");
+        //}
+        return factoryInterface.getUserDAO().getFollowingCount(request);
+    }
+
+    //The people following the user;
+    public FollowerCountResponse getFollowerCount(FollowerCountRequest request) {
+        // if (!checkValidAuth(request.getAuthToken().getToken())){
+        //   return new FollowingCountResponse("AuthToken Expired, please log in again");
+        //}
+        return factoryInterface.getUserDAO().getFollowerCount(request);
     }
 
 
 
-    /**
-     * Returns the dummy user to be returned by the login operation.
-     * This is written as a separate method to allow mocking of the dummy user.
-     *
-     * @return a dummy user.
-     */
-    User getDummyUser() {
-        return getFakeData().getFirstUser();
-    }
 
-    /**
-     * Returns the dummy auth token to be returned by the login operation.
-     * This is written as a separate method to allow mocking of the dummy auth token.
-     *
-     * @return a dummy auth token.
-     */
-    AuthToken getDummyAuthToken() {
-        return getFakeData().getAuthToken();
-    }
-
-    /**
-     * Returns the {@link FakeData} object used to generate dummy users and auth tokens.
-     * This is written as a separate method to allow mocking of the {@link FakeData}.
-     *
-     * @return a {@link FakeData} instance.
-     */
     FakeData getFakeData() {
         return FakeData.getInstance();
     }

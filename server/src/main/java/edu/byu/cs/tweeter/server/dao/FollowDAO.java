@@ -22,12 +22,13 @@ import edu.byu.cs.tweeter.response.FollowingResponse;
 import edu.byu.cs.tweeter.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.request.UnfollowRequest;
 import edu.byu.cs.tweeter.server.dao.interfaces.FollowDAOInterface;
-import edu.byu.cs.tweeter.server.dao.pojobeans.UserTableBean;
+import edu.byu.cs.tweeter.server.dao.pojobeans.FollowsTableBean;
 import edu.byu.cs.tweeter.util.FakeData;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbIndex;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.Page;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 /**
@@ -72,7 +73,22 @@ public class FollowDAO extends KingDAO implements FollowDAOInterface {
         assert request.getLimit() > 0;
         assert request.getFollowerAlias() != null;
 
-        List<User> allFollowees = getDummyFollowees();
+        DynamoDbTable<FollowsTableBean> followeeCountTable = getDbClient().table("follows", TableSchema.fromBean(FollowsTableBean.class));
+
+        QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
+                .queryConditional(QueryConditional.keyEqualTo(Key.builder()
+                        .partitionValue(request.getFollowerAlias())
+                        .build()))
+                .scanIndexForward(true);
+
+        QueryEnhancedRequest queryEnhancedRequest = requestBuilder.build();
+
+        System.out.println("made it to the list");
+        List<FollowsTableBean> allFollowees = followeeCountTable.query(queryEnhancedRequest)
+                .items()
+                .stream()
+                .collect(Collectors.toList());
+       // List<User> allFollowees = getDummyFollowees();
         List<User> responseFollowees = new ArrayList<>(request.getLimit());
 
         boolean hasMorePages = false;
@@ -82,7 +98,10 @@ public class FollowDAO extends KingDAO implements FollowDAOInterface {
                 int followeesIndex = getFolloweesStartingIndex(request.getLastFolloweeAlias(), allFollowees);
 
                 for(int limitCounter = 0; followeesIndex < allFollowees.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
-                    responseFollowees.add(allFollowees.get(followeesIndex));
+                    User user = new User(allFollowees.get(followeesIndex).getFollower_first_name(),
+                            allFollowees.get(followeesIndex).getFollower_last_name(), allFollowees.get(followeesIndex).getFollower_handle(),
+                            allFollowees.get(followeesIndex).getFollower_image());
+                    responseFollowees.add(user);
                 }
 
                 hasMorePages = followeesIndex < allFollowees.size();
@@ -97,60 +116,63 @@ public class FollowDAO extends KingDAO implements FollowDAOInterface {
         assert request.getLimit() > 0;
         assert request.getFollowerAlias() != null;
 
-        List<User> allFollowees = getDummyFollowees();
-        List<User> responseFollowees = new ArrayList<>(request.getLimit());
-
-        boolean hasMorePages = false;
-
-        if(request.getLimit() > 0) {
-            if (allFollowees != null) {
-                int followeesIndex = getFolloweesStartingIndex(request.getLastFolloweeAlias(), allFollowees);
-
-                for(int limitCounter = 0; followeesIndex < allFollowees.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
-                    responseFollowees.add(allFollowees.get(followeesIndex));
-                }
-
-                hasMorePages = followeesIndex < allFollowees.size();
-
-            }
-        }
-
-        return new FollowerResponse(responseFollowees, hasMorePages);
-    }
-
-    public FollowingCountResponse getFollowingCount(FollowingCountRequest request){
-        assert request.getUser() !=null;
-        return new FollowingCountResponse(getFollowerCountNum(request.getUser()), request.getAuthToken());
-    }
-
-    public FollowerCountResponse getFollowerCount(FollowerCountRequest request){
-        assert request.getUser() !=null;
-        if (!checkValidAuth(request.getAuthToken().getToken())){
-            return new FollowerCountResponse("AuthToken Expired, please log in again");
-        }
-
-        int followeeCount = getFolloweeCount(request.getUser());
-        System.out.println("follow count debug - " + followeeCount);
-        if (followeeCount == -1){
-            return new FollowerCountResponse("COULD NOT FIND THE USER IN THE DATABASE");
-        }
-        return new FollowerCountResponse(followeeCount, request.getAuthToken());
-    }
-
-    public Integer getFolloweeCount(User follower) {
-        assert follower != null;
         try {
-            DynamoDbTable<org.example.FollowsTableBean> followeeCountTable = getDbClient().table("follows", TableSchema.fromBean(org.example.FollowsTableBean.class));
+            DynamoDbIndex<FollowsTableBean> followerCountTable = getDbClient()
+                    .table("follows", TableSchema.fromBean(FollowsTableBean.class))
+                    .index("followIndex");
+
+            QueryConditional queryConditional = QueryConditional.keyEqualTo(Key.builder()
+                    .partitionValue(request.getFollowerAlias())
+                    .build());
+            System.out.println("made it to the list for iterator");
+            Iterator<Page<FollowsTableBean>> result = followerCountTable.query(QueryEnhancedRequest.builder().queryConditional(queryConditional).build()).iterator();
+            Page<FollowsTableBean> list = result.next();
+
+
+            List<FollowsTableBean> allFollowees = list.items();
+            List<User> responseFollowees = new ArrayList<>(request.getLimit());
+
+            boolean hasMorePages = false;
+
+            if (request.getLimit() > 0) {
+                if (allFollowees != null) {
+                    int followeesIndex = getFollowersStartingIndex(request.getLastFolloweeAlias(), allFollowees);
+
+                    for (int limitCounter = 0; followeesIndex < allFollowees.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
+                        User user = new User(allFollowees.get(followeesIndex).getFollowing_first_name(),
+                                allFollowees.get(followeesIndex).getFollowing_last_name(), allFollowees.get(followeesIndex).getFollowee_handle(),
+                                allFollowees.get(followeesIndex).getFollowing_image());
+                        responseFollowees.add(user);
+                    }
+
+                    hasMorePages = followeesIndex < allFollowees.size();
+
+                }
+            }
+            return new FollowerResponse(responseFollowees, hasMorePages);
+        } catch (Exception ex){
+            ex.printStackTrace();
+            return new FollowerResponse("FAILED TO GET FOLLOWERS - FOLLOW DAO");
+        }
+    }
+
+
+    /*public Integer getFolloweeCount(User followee) {
+        assert followee != null;
+        try {
+            System.out.println("Inside Followee Count");
+            DynamoDbTable<FollowsTableBean> followeeCountTable = getDbClient().table("follows", TableSchema.fromBean(FollowsTableBean.class));
 
             QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
                     .queryConditional(QueryConditional.keyEqualTo(Key.builder()
-                            .partitionValue(follower.getAlias())
+                            .partitionValue(followee.getAlias())
                             .build()))
                     .scanIndexForward(true);
 
             QueryEnhancedRequest request = requestBuilder.build();
 
-            List<org.example.FollowsTableBean> result = followeeCountTable.query(request)
+            System.out.println("made it to the list");
+            List<FollowsTableBean> result = followeeCountTable.query(request)
                     .items()
                     .stream()
                     .collect(Collectors.toList());
@@ -166,26 +188,26 @@ public class FollowDAO extends KingDAO implements FollowDAOInterface {
     }
 
     public Integer getFollowerCountNum(User follower) {
-        // TODO: uses the dummy data.  Replace with a real implementation.
         assert follower != null;
         try {
-            DynamoDbIndex<org.example.FollowsTableBean> followerCountTable = getDbClient().table("follows", TableSchema.fromBean(org.example.FollowsTableBean.class)).index("followee_handle-follower_handle-index");
-            QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
-                    .queryConditional(QueryConditional.keyEqualTo(Key.builder()
-                            .build()));
+           DynamoDbIndex<FollowsTableBean> followerCountTable = getDbClient()
+                   .table("follows", TableSchema.fromBean(FollowsTableBean.class))
+                   .index("followIndex");
 
-
-            Iterator<org.example.FollowsTableBean> feedResults = (Iterator<org.example.FollowsTableBean>) followerCountTable.query(requestBuilder);
-
-            System.out.println(result.size());
-
-            return result.size();
+           QueryConditional queryConditional = QueryConditional.keyEqualTo(Key.builder()
+                   .partitionValue(follower.getAlias())
+                   .build());
+            System.out.println("made it to the list for iterator");
+           Iterator<Page<FollowsTableBean>> result = followerCountTable.query(QueryEnhancedRequest.builder().queryConditional(queryConditional).build()).iterator();
+           Page<FollowsTableBean> list = result.next();
+           System.out.println("dset");
+            return list.items().size();
         }
         catch (Exception ex){
             ex.printStackTrace();
             return -1;
         }
-    }
+    } */
 
     /**
      * Determines the index for the first followee in the specified 'allFollowees' list that should
@@ -197,7 +219,7 @@ public class FollowDAO extends KingDAO implements FollowDAOInterface {
      * @param allFollowees the generated list of followees from which we are returning paged results.
      * @return the index of the first followee to be returned.
      */
-    private int getFolloweesStartingIndex(String lastFolloweeAlias, List<User> allFollowees) {
+    private int getFolloweesStartingIndex(String lastFolloweeAlias, List<FollowsTableBean> allFollowees) {
 
         int followeesIndex = 0;
 
@@ -205,7 +227,27 @@ public class FollowDAO extends KingDAO implements FollowDAOInterface {
             // This is a paged request for something after the first page. Find the first item
             // we should return
             for (int i = 0; i < allFollowees.size(); i++) {
-                if(lastFolloweeAlias.equals(allFollowees.get(i).getAlias())) {
+                if(lastFolloweeAlias.equals(allFollowees.get(i).getFollowee_handle())) {
+                    // We found the index of the last item returned last time. Increment to get
+                    // to the first one we should return
+                    followeesIndex = i + 1;
+                    break;
+                }
+            }
+        }
+
+        return followeesIndex;
+    }
+
+    private int getFollowersStartingIndex(String lastFolloweeAlias, List<FollowsTableBean> allFollowees) {
+
+        int followeesIndex = 0;
+
+        if(lastFolloweeAlias != null) {
+            // This is a paged request for something after the first page. Find the first item
+            // we should return
+            for (int i = 0; i < allFollowees.size(); i++) {
+                if(lastFolloweeAlias.equals(allFollowees.get(i).getFollower_handle())) {
                     // We found the index of the last item returned last time. Increment to get
                     // to the first one we should return
                     followeesIndex = i + 1;

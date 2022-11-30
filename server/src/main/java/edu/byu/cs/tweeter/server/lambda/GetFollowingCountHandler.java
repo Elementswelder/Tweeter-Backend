@@ -6,6 +6,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.byu.cs.tweeter.response.FollowingCountResponse;
 import edu.byu.cs.tweeter.request.FollowingCountRequest;
 import edu.byu.cs.tweeter.server.service.FollowService;
+import edu.byu.cs.tweeter.server.service.UserService;
 
 /**
  * An AWS lambda function that returns the users a user is following.
@@ -23,7 +24,7 @@ public class GetFollowingCountHandler extends KingHandler implements RequestHand
      */
     @Override
     public FollowingCountResponse handleRequest(FollowingCountRequest request, Context context) {
-        FollowService service = new FollowService(getFactoryInterface());
+        UserService service = new UserService(getFactoryInterface());
         return service.getFollowingCount(request);
     }
 }

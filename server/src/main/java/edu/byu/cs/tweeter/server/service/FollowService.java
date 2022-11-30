@@ -1,4 +1,5 @@
 package edu.byu.cs.tweeter.server.service;
+import edu.byu.cs.tweeter.request.GetUserRequest;
 import edu.byu.cs.tweeter.response.FollowResponse;
 import edu.byu.cs.tweeter.response.FollowerCountResponse;
 import edu.byu.cs.tweeter.response.FollowingCountResponse;
@@ -15,6 +16,7 @@ import edu.byu.cs.tweeter.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.request.UnfollowRequest;
 import edu.byu.cs.tweeter.server.dao.interfaces.DAOFactoryInterface;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
+import edu.byu.cs.tweeter.server.dao.pojobeans.UserTableBean;
 import edu.byu.cs.tweeter.util.FakeData;
 
 /**
@@ -28,8 +30,6 @@ public class FollowService {
     public FollowService(DAOFactoryInterface factoryInterface){
         this.factoryInterface = factoryInterface;
     }
-
-
     /**
      * Returns the users that the user specified in the request is following. Uses information in
      * the request object to limit the number of followees returned and to return the next set of
@@ -40,31 +40,30 @@ public class FollowService {
      * @return the followees.
      */
     public FollowingResponse getFollowees(FollowingRequest request) {
+        // if (!checkValidAuth(request.getAuthToken().getToken())){
+        //   return new GetUserResponse("AuthToken Expired, please log in again");
+        //}
+
         if (request.getFollowerAlias() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have a follower alias");
         } else if (request.getLimit() <= 0) {
             throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
         }
-        return getFollowingDAO().getFollowees(request);
+        return factoryInterface.getFollowDAO().getFollowees(request);
     }
 
     public FollowerResponse getFollowers(FollowersRequest request) {
+        // if (!checkValidAuth(request.getAuthToken().getToken())){
+        //   return new GetUserResponse("AuthToken Expired, please log in again");
+        //}
         if (request.getFollowerAlias() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have a follower alias");
         } else if (request.getLimit() <= 0) {
             throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
         }
-        return getFollowingDAO().getFollowers(request);
+        return factoryInterface.getFollowDAO().getFollowers(request);
     }
 
-    public FollowingCountResponse getFollowingCount(FollowingCountRequest request) {
-        return getFollowingDAO().getFollowingCount(request);
-    }
-
-    //The people following the user;
-    public FollowerCountResponse getFollowerCount(FollowerCountRequest request) {
-        return factoryInterface.getFollowDAO().getFollowerCount(request);
-    }
 
     public IsFollowerResponse isFollowerResponse(IsFollowerRequest request){
         return getFollowingDAO().isFollower(request);
