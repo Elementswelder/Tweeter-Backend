@@ -27,11 +27,11 @@ public class AuthTokenDAO extends KingDAO implements AuthTokenDAOInterface {
     }
 
     @Override
-    public boolean expireAuthToken(String authToken) {
+    public boolean expireAuthToken(String authToken, String userAlias) {
         System.out.println("Trying to expire an auth token: " + authToken);
         try {
             DynamoDbTable<AuthTokenBean> authDynamoDbTable = getDbClient().table("AuthTokenTable", TableSchema.fromBean(AuthTokenBean.class));
-            Key key = Key.builder().partitionValue(authToken).build();
+            Key key = Key.builder().partitionValue(authToken).sortValue(userAlias).build();
             AuthTokenBean authTokenBean = authDynamoDbTable.getItem(key);
             authTokenBean.setDate(EXPIRE_TIME);
 

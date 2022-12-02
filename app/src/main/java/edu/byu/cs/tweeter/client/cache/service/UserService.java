@@ -28,7 +28,8 @@ public class UserService extends ServiceHandler<Runnable>{
     }
 
     public void logout(SimpleNotifyObserver observer){
-        LogoutTask logoutTask = new LogoutTask(Cache.getInstance().getCurrUserAuthToken(), new SimpleNotificationHandler(observer));
+        LogoutTask logoutTask = new LogoutTask(Cache.getInstance().getCurrUserAuthToken(),
+                Cache.getInstance().getCurrUser().getAlias(),new SimpleNotificationHandler(observer));
         startTask(logoutTask);
     }
 }

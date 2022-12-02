@@ -1,23 +1,17 @@
 package edu.byu.cs.tweeter.server.service;
-import edu.byu.cs.tweeter.request.GetUserRequest;
-import edu.byu.cs.tweeter.response.FollowResponse;
-import edu.byu.cs.tweeter.response.FollowerCountResponse;
-import edu.byu.cs.tweeter.response.FollowingCountResponse;
-import edu.byu.cs.tweeter.response.IsFollowerResponse;
-import edu.byu.cs.tweeter.response.UnfollowResponse;
+
 import edu.byu.cs.tweeter.request.FollowRequest;
-import edu.byu.cs.tweeter.request.FollowerCountRequest;
 import edu.byu.cs.tweeter.request.FollowersRequest;
-import edu.byu.cs.tweeter.request.FollowingCountRequest;
 import edu.byu.cs.tweeter.request.FollowingRequest;
-import edu.byu.cs.tweeter.response.FollowerResponse;
-import edu.byu.cs.tweeter.response.FollowingResponse;
 import edu.byu.cs.tweeter.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.request.UnfollowRequest;
-import edu.byu.cs.tweeter.server.dao.interfaces.DAOFactoryInterface;
+import edu.byu.cs.tweeter.response.FollowResponse;
+import edu.byu.cs.tweeter.response.FollowerResponse;
+import edu.byu.cs.tweeter.response.FollowingResponse;
+import edu.byu.cs.tweeter.response.IsFollowerResponse;
+import edu.byu.cs.tweeter.response.UnfollowResponse;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
-import edu.byu.cs.tweeter.server.dao.pojobeans.UserTableBean;
-import edu.byu.cs.tweeter.util.FakeData;
+import edu.byu.cs.tweeter.server.dao.interfaces.DAOFactoryInterface;
 
 /**
  * Contains the business logic for getting the users a user is following.
@@ -66,17 +60,33 @@ public class FollowService {
 
 
     public IsFollowerResponse isFollowerResponse(IsFollowerRequest request){
-        return getFollowingDAO().isFollower(request);
+        // if (!checkValidAuth(request.getAuthToken().getToken())){
+        //   return new GetUserResponse("AuthToken Expired, please log in again");
+        //}
+        return factoryInterface.getFollowDAO().isFollower(request);
     }
 
     public FollowResponse followUser(FollowRequest request){
-        return getFollowingDAO().followUser(request);
+        // if (!checkValidAuth(request.getAuthToken().getToken())){
+        //   return new GetUserResponse("AuthToken Expired, please log in again");
+        //}
+        boolean success = factoryInterface.getUserDAO().updateFollowCount(request.getCurrentUser(), request.getFollowee(), true);
+        if (!success){
+            return new FollowResponse("FAILED TO UPDATE THE FOLLOW COUNT IN USER DAO");
+        }
+        return factoryInterface.getFollowDAO().followUser(request);
     }
 
     public UnfollowResponse unFollowUser(UnfollowRequest request){
-        return getFollowingDAO().unFollowUser(request);
+        // if (!checkValidAuth(request.getAuthToken().getToken())){
+        //   return new GetUserResponse("AuthToken Expired, please log in again");
+        //}
+        boolean success = factoryInterface.getUserDAO().updateFollowCount(request.getCurrentUser(), request.getFollowee(), false);
+        if (!success){
+            return new UnfollowResponse("FAILED TO UPDATE THE FOLLOW COUNT IN USER DAO");
+        }
+        return factoryInterface.getFollowDAO().unFollowUser(request);
     }
-
 
         /**
          * Returns an instance of {@link FollowDAO}. Allows mocking of the FollowDAO class
@@ -88,6 +98,4 @@ public class FollowService {
     FollowDAO getFollowingDAO() {
         return new FollowDAO();
     }
-
-    FakeData getFakeData() {return FakeData.getInstance();}
 }

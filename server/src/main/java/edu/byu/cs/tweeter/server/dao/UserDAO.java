@@ -98,10 +98,12 @@ public class UserDAO extends KingDAO implements UserDAOInterface {
     @Override
     public GetUserResponse getUser(GetUserRequest request) {
         try {
+            System.out.println("Inside Get User");
             DynamoDbTable<UserTableBean> loginTable = getDbClient().table("UserTable", TableSchema.fromBean(UserTableBean.class));
             Key key = Key.builder().partitionValue(request.getAlias()).build();
             UserTableBean user = loginTable.getItem(key);
             if (user != null){
+                System.out.println("User found - " + user.getAlias());
                 User newUser = new User(user.firstName, user.lastName, user.alias, gets3Client().getUrl(s3BucketName, request.getAlias()).toString());
                 return new GetUserResponse(newUser, request.getAuthToken());
             }
@@ -137,6 +139,44 @@ public class UserDAO extends KingDAO implements UserDAOInterface {
         } catch (Exception e) {
             e.printStackTrace();
             return new FollowerCountResponse("FAILED TO FIND A USER IN THE DATABASE - GET FOLLOWER COUNT");
+        }
+    }
+
+    /**
+     * The boolean is used to tell if the user is unfollowing or following someone. If it is true
+     * add the count by 1, if it is false, lower the count by one
+     * @param currentUser
+     * @param followUser
+     * @param following
+     * @return
+     */
+    public boolean updateFollowCount(User currentUser, User followUser, boolean following){
+        try {
+            DynamoDbTable<UserTableBean> userTable = getDbClient().table("UserTable", TableSchema.fromBean(UserTableBean.class));
+            Key currentUserKey = Key.builder().partitionValue(currentUser.getAlias()).build();
+            Key followUserKey = Key.builder().partitionValue(followUser.getAlias()).build();
+            UserTableBean currentUserTable = userTable.getItem(currentUserKey);
+            UserTableBean followUserTable = userTable.getItem(followUserKey);
+
+            if (currentUserTable != null && followUserTable != null){
+                if (following){
+                    currentUserTable.setFollowing(currentUserTable.getFollowing()+1);
+                    followUserTable.setFollowers(followUserTable.getFollowers()+1);
+                    return true;
+                }
+                else {
+                    currentUserTable.setFollowing(currentUserTable.getFollowing()-1);
+                    followUserTable.setFollowers(followUserTable.getFollowers()-1);
+                    return true;
+                }
+
+            } else {
+                return false;
+            }
+
+        } catch (Exception ex){
+            ex.printStackTrace();
+            return false;
         }
     }
 

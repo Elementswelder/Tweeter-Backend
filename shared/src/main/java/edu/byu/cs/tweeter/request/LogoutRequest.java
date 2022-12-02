@@ -8,6 +8,7 @@ import edu.byu.cs.tweeter.model.domain.AuthToken;
 public class LogoutRequest {
 
     private AuthToken authToken;
+    private String userAlias;
 
     /**
      * Allows construction of the object from Json. Private so it won't be called in normal code.
@@ -15,7 +16,9 @@ public class LogoutRequest {
     private LogoutRequest() {}
 
     
-    public LogoutRequest(AuthToken authToken) {
+    public LogoutRequest(AuthToken authToken, String userAlias
+    ) {
+        this.userAlias = userAlias;
         this.authToken = authToken;
     }
 
@@ -31,5 +34,14 @@ public class LogoutRequest {
     public void setAuthToken(AuthToken authToken) {
         this.authToken = authToken;
     }
+
+    public String getUserAlias() {
+        return userAlias;
+    }
+
+    public void setUserAlias(String userAlias) {
+        this.userAlias = userAlias;
+    }
+
 
 }

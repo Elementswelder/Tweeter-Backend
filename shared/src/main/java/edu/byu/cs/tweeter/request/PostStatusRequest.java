@@ -14,7 +14,7 @@ public class PostStatusRequest {
     /**
      * Allows construction of the object from Json. Private so it won't be called in normal code.
      */
-    private PostStatusRequest() {}
+    public PostStatusRequest() {}
 
 
     public PostStatusRequest(AuthToken authToken, Status status) {

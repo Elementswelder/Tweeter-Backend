@@ -68,14 +68,14 @@ public class FollowService extends ServiceHandler<Runnable>{
 
     public void followUser(User selectedUser, SimpleNotifyObserver observer){
         FollowTask followTask = new FollowTask(Cache.getInstance().getCurrUserAuthToken(),
-                selectedUser, new SimpleNotificationHandler(observer));
+                selectedUser, Cache.getInstance().getCurrUser(), new SimpleNotificationHandler(observer));
         startTask(followTask);
 
     }
 
     public void unfollowUser(User selectedUser, SimpleNotifyObserver observer){
         UnfollowTask unfollowTask = new UnfollowTask(Cache.getInstance().getCurrUserAuthToken(),
-                selectedUser, new SimpleNotificationHandler(observer));
+                selectedUser, Cache.getInstance().getCurrUser(), new SimpleNotificationHandler(observer));
         startTask(unfollowTask);
     }
 

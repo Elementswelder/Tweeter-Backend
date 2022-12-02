@@ -9,6 +9,7 @@ import edu.byu.cs.tweeter.model.domain.User;
 public class FollowRequest {
 
     private User followee;
+    private User currentUser;
     private AuthToken authToken;
 
     /**
@@ -17,8 +18,10 @@ public class FollowRequest {
 
     private FollowRequest() {}
 
-    public FollowRequest(AuthToken authToken, User follower) {
+    public FollowRequest(AuthToken authToken, User follower, User currentUser) {
         this.authToken = authToken;
+        this.followee = follower;
+        this.currentUser = currentUser;
     }
 
     public User getFollowee() {
@@ -35,5 +38,13 @@ public class FollowRequest {
 
     public void setAuthToken(AuthToken authToken) {
         this.authToken = authToken;
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
     }
 }

@@ -5,15 +5,13 @@ import edu.byu.cs.tweeter.server.dao.interfaces.DAOFactoryInterface;
 import edu.byu.cs.tweeter.server.dao.interfaces.FollowDAOInterface;
 import edu.byu.cs.tweeter.server.dao.interfaces.S3DAOInterface;
 import edu.byu.cs.tweeter.server.dao.interfaces.StatusDAOInterface;
-import edu.byu.cs.tweeter.server.dao.interfaces.StoryDAOInterface;
 import edu.byu.cs.tweeter.server.dao.interfaces.UserDAOInterface;
 
 public class DAOFactory implements DAOFactoryInterface {
 
-    StatusDAOInterface statusDAOInterface = new StatusDAO();
+    StatusDAOInterface statusDAOInterface = new StoryDAO();
     AuthTokenDAOInterface authTokenDAOInterface = new AuthTokenDAO();
     UserDAOInterface userDAOInterface = new UserDAO();
-    StoryDAOInterface storyDAOInterface = new StoryDAO();
     S3DAOInterface s3DAOInterface = new S3DAO();
     FollowDAOInterface followDAOInterface = new FollowDAO();
 
@@ -24,8 +22,8 @@ public class DAOFactory implements DAOFactoryInterface {
     }
 
     @Override
-    public StatusDAO getStatusDAO() {
-        return new StatusDAO();
+    public StoryDAO getStatusDAO() {
+        return new StoryDAO();
     }
 
     @Override
@@ -38,10 +36,6 @@ public class DAOFactory implements DAOFactoryInterface {
         return (UserDAO) userDAOInterface;
     }
 
-    @Override
-    public StoryDAO getStoryDAO() {
-        return new StoryDAO();
-    }
 
     @Override
     public S3DAO getS3DAO() {

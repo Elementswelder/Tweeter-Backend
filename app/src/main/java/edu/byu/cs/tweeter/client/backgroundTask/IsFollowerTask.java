@@ -24,7 +24,7 @@ public class IsFollowerTask extends AuthenticatedTask {
     /**
      * The alleged follower.
      */
-    private final User follower;
+    private final User currentUser;
 
     /**
      * The alleged followee.
@@ -34,9 +34,9 @@ public class IsFollowerTask extends AuthenticatedTask {
     private boolean isFollower;
     private AuthToken authToken;
 
-    public IsFollowerTask(AuthToken authToken, User follower, User followee, Handler messageHandler) {
+    public IsFollowerTask(AuthToken authToken, User currentUser, User followee, Handler messageHandler) {
         super(authToken, messageHandler);
-        this.follower = follower;
+        this.currentUser = currentUser;
         this.followee = followee;
     }
 
@@ -44,7 +44,7 @@ public class IsFollowerTask extends AuthenticatedTask {
     protected void runTask() {
         try {
 
-            IsFollowerRequest request = new IsFollowerRequest(authToken, follower, followee);
+            IsFollowerRequest request = new IsFollowerRequest(authToken, currentUser, followee);
             IsFollowerResponse response = serverFacade.isFollower(request, FollowService.URL_IS_FOLLOWER);
 
             if (response.isSuccess()) {

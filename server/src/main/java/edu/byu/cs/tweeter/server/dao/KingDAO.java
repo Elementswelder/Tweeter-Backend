@@ -40,7 +40,7 @@ public class KingDAO {
         return s3client;
     }
 
-    protected DynamoDbEnhancedClient getDbClient(){
+    public DynamoDbEnhancedClient getDbClient(){
         if (dbClient == null){
             dbClient = DynamoDbClient.builder()
                     .credentialsProvider(StaticCredentialsProvider.create(

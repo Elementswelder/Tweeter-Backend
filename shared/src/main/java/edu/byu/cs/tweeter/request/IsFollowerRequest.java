@@ -8,7 +8,7 @@ import edu.byu.cs.tweeter.model.domain.User;
  */
 public class IsFollowerRequest {
 
-    private User follower;
+    private User currentUser;
     private User followee;
     private AuthToken authToken;
 
@@ -17,18 +17,18 @@ public class IsFollowerRequest {
      */
     private IsFollowerRequest() {}
 
-    public IsFollowerRequest(AuthToken authToken, User follower, User followee) {
+    public IsFollowerRequest(AuthToken authToken, User currentUser, User followee) {
         this.authToken = authToken;
         this.followee = followee;
-        this.follower = follower;
+        this.currentUser = currentUser;
     }
 
-    public User getFollower() {
-        return follower;
+    public User getCurrentUser() {
+        return currentUser;
     }
 
-    public void setFollower(User follower) {
-        this.follower = follower;
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
     }
 
     public User getFollowee() {

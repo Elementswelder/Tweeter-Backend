@@ -4,21 +4,36 @@ import org.joda.time.DateTime;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
+import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.request.FollowersRequest;
 import edu.byu.cs.tweeter.request.FollowingRequest;
+import edu.byu.cs.tweeter.request.GetUserRequest;
 import edu.byu.cs.tweeter.request.LoginRequest;
+import edu.byu.cs.tweeter.request.PostStatusRequest;
 import edu.byu.cs.tweeter.request.RegisterRequest;
+import edu.byu.cs.tweeter.request.StatusRequest;
 import edu.byu.cs.tweeter.response.FollowerResponse;
 import edu.byu.cs.tweeter.response.FollowingResponse;
+import edu.byu.cs.tweeter.response.GetUserResponse;
 import edu.byu.cs.tweeter.response.LoginResponse;
+import edu.byu.cs.tweeter.response.PostStatusResponse;
 import edu.byu.cs.tweeter.response.RegisterResponse;
+import edu.byu.cs.tweeter.server.dao.AuthTokenDAO;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
 import edu.byu.cs.tweeter.server.dao.KingDAO;
+import edu.byu.cs.tweeter.server.dao.StoryDAO;
+import edu.byu.cs.tweeter.server.dao.UserDAO;
+import edu.byu.cs.tweeter.server.dao.pojobeans.AuthTokenBean;
+import edu.byu.cs.tweeter.server.dao.pojobeans.FollowsTableBean;
 import edu.byu.cs.tweeter.server.lambda.KingHandler;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
 public class ServerTest {
 
@@ -72,7 +87,7 @@ public class ServerTest {
     }
 
     private static void testGetFollowes() {
-        FollowingRequest request = new FollowingRequest(new AuthToken("tes", "Test"), "@FreddyBoi", 10, "@me");
+        FollowingRequest request = new FollowingRequest(new AuthToken("tes", "Test"), "@FreddyBoi", 10, "@cooldude");
 
         FollowDAO followDAO = new FollowDAO();
 
@@ -81,12 +96,55 @@ public class ServerTest {
     }
 
     private static void testGetFollowers() {
-        FollowersRequest request = new FollowersRequest(new AuthToken("tes", "Test"), "@FreddyBoi", 10, "@me");
+        FollowersRequest request = new FollowersRequest(new AuthToken("tes", "Test"), "@FreddyBoi", 10, "@cooldude");
 
         FollowDAO followDAO = new FollowDAO();
 
         FollowerResponse response = followDAO.getFollowers(request);
         System.out.println("Test");
+    }
+
+    private static void checkExpireAuth(){
+        AuthTokenDAO kingDAO = new AuthTokenDAO();
+        boolean success = kingDAO.expireAuthToken("147b7cda-f23f-4503-b5e8-1f53935b5dfb", "@FollowerTest");
+        System.out.println(success);
+    }
+
+    private static void testStatus(){
+        List<String> urls = new ArrayList<>();
+        urls.add("www.google.com");
+        urls.add("www.amazon.com");
+        List<String> mentions = new ArrayList<>();
+        mentions.add("@FreddyBoi");
+        mentions.add("@CoolDude");
+        AuthToken authToken = new AuthToken("test", "test");
+        User user = new User("freddy", "last", "@FreddyBoi", "image");
+        Status status = new Status("Cool post bro", user, "time", urls, mentions);
+        PostStatusRequest request = new PostStatusRequest(authToken, status);
+
+        StoryDAO storyDAO = new StoryDAO();
+        PostStatusResponse response = storyDAO.postStatus(request);
+        System.out.println(response.isSuccess());
+    }
+
+
+    private static void addFollowers(){
+        FollowsTableBean followsTableBean = new FollowsTableBean("@cooldude", "Cool", "Dude", "https://photo-bucket-cs340.s3.amazonaws.com/%40FollowerTest",
+                "@FreddyBoi", "Freddy", "Boi", "https://photo-bucket-cs340.s3.amazonaws.com/%40FollowerTest");
+        KingDAO kingDAO = new KingDAO();
+        DynamoDbTable<FollowsTableBean> authDynamoDbTable = kingDAO.getDbClient().table("follows", TableSchema.fromBean(FollowsTableBean.class));
+
+        authDynamoDbTable.putItem(followsTableBean);
+
+    }
+
+    private static void getUserTest(){
+        KingHandler kingHandler = new KingHandler();
+        User user = new User("freddy", "last", "@FreddyBoi", "https://photo-bucket-cs340.s3.amazonaws.com/%40FollowerTest");
+        UserDAO userDAO = new UserDAO();
+        UserService userService = new UserService(kingHandler.getFactoryInterface());
+        GetUserResponse response = userService.getUser(new GetUserRequest(new AuthToken("test","test"), user.getAlias()));
+        System.out.println("test);");
     }
 
 

@@ -56,7 +56,7 @@ public class UserService {
     }
 
     public LogoutResponse logout(LogoutRequest request){
-        boolean success = factoryInterface.getAuthTokenDAO().expireAuthToken(request.getAuthToken().getToken());
+        boolean success = factoryInterface.getAuthTokenDAO().expireAuthToken(request.getAuthToken().getToken(), request.getUserAlias());
         if (!success){
             return new LogoutResponse("FAILED TO UPDATE THE AUTH TOKEN");
         }

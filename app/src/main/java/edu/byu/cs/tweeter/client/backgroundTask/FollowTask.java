@@ -20,19 +20,21 @@ public class FollowTask extends AuthenticatedTask {
      * The user that is being followed.
      */
     private final User followee;
+    private final User currentUser;
     private static final String LOG_TAG = "FollowTask";
     private AuthToken authToken;
 
-    public FollowTask(AuthToken authToken, User followee, Handler messageHandler) {
+    public FollowTask(AuthToken authToken, User followee, User currentUser, Handler messageHandler) {
         super(authToken, messageHandler);
         this.followee = followee;
+        this.currentUser = currentUser;
     }
 
     @Override
     protected void runTask() {
         try {
 
-            FollowRequest request = new FollowRequest(authToken, followee);
+            FollowRequest request = new FollowRequest(authToken, followee, currentUser);
             FollowResponse response = serverFacade.followUser(request, FollowService.URL_FOLLOW);
 
             if (response.isSuccess()) {

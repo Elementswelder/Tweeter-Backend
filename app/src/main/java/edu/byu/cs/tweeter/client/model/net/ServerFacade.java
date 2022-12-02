@@ -122,7 +122,8 @@ public class ServerFacade {
 
     public GetUserResponse getUser(GetUserRequest request, String urlPath)
         throws IOException, TweeterRemoteException {
-        return clientCommunicator.doPost(urlPath, request, null, GetUserResponse.class);
+        GetUserResponse response = clientCommunicator.doPost(urlPath, request, null, GetUserResponse.class);
+        return response;
     }
 
 }

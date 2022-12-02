@@ -15,11 +15,13 @@ import edu.byu.cs.tweeter.response.LogoutResponse;
 public class LogoutTask extends AuthenticatedTask {
 
     private AuthToken authToken;
+    private String userAlias;
     private static final String LOG_TAG = "LogoutTask";
 
 
-    public LogoutTask(AuthToken authToken, Handler messageHandler) {
+    public LogoutTask(AuthToken authToken, String userAlias, Handler messageHandler) {
         super(authToken, messageHandler);
+        this.userAlias = userAlias;
         this.authToken = authToken;
     }
 
@@ -27,7 +29,7 @@ public class LogoutTask extends AuthenticatedTask {
     protected void runTask() {
 
         try {
-            LogoutRequest logoutRequest = new LogoutRequest(authToken);
+            LogoutRequest logoutRequest = new LogoutRequest(authToken, userAlias);
             LogoutResponse response = serverFacade.logout(logoutRequest, UserService.URL_LOGOUT);
 
             if (response.isSuccess()) {

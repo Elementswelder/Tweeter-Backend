@@ -20,11 +20,11 @@ public class AuthTokenBean {
     }
 
     @DynamoDbPartitionKey
-    public String getAuthtoken() {
+    public String getauthtoken() {
         return authtoken;
     }
 
-    public void setAuthtoken(String authtoken) {
+    public void setauthtoken(String authtoken) {
         this.authtoken = authtoken;
     }
 
@@ -37,11 +37,11 @@ public class AuthTokenBean {
     }
 
     @DynamoDbSortKey
-    public String getAlias() {
+    public String getalias() {
         return alias;
     }
 
-    public void setAlias(String alias) {
+    public void setalias(String alias) {
         this.alias = alias;
     }
 }

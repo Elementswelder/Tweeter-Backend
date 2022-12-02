@@ -1,6 +1,12 @@
 package edu.byu.cs.tweeter.server.service;
 
+import java.util.List;
+
+import edu.byu.cs.tweeter.model.domain.Status;
+import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.request.GetUserRequest;
 import edu.byu.cs.tweeter.response.FeedResponse;
+import edu.byu.cs.tweeter.response.GetUserResponse;
 import edu.byu.cs.tweeter.response.PostStatusResponse;
 import edu.byu.cs.tweeter.response.StatusResponse;
 import edu.byu.cs.tweeter.request.FeedRequest;
@@ -8,8 +14,9 @@ import edu.byu.cs.tweeter.request.PostStatusRequest;
 import edu.byu.cs.tweeter.request.StatusRequest;
 import edu.byu.cs.tweeter.server.dao.interfaces.DAOFactoryInterface;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
-import edu.byu.cs.tweeter.server.dao.StatusDAO;
+import edu.byu.cs.tweeter.server.dao.StoryDAO;
 import edu.byu.cs.tweeter.util.FakeData;
+import edu.byu.cs.tweeter.util.Pair;
 
 /**
  * Contains the business logic for getting the users a user is following.
@@ -37,7 +44,14 @@ public class StatusService {
         } else if (request.getLimit() <= 0) {
             throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
         }
-        return getStatusDAO().getStatuses(request);
+        Pair<List<Status>, Boolean> allStories = factoryInterface.getStatusDAO().getStatuses(request);
+        GetUserResponse currentUser = factoryInterface.getUserDAO().getUser(
+                new GetUserRequest(request.getAuthToken(), request.getFollowerAlias()));
+        for(int i = 0; i < allStories.getFirst().size(); i++){
+            allStories.getFirst().get(i).setUser(currentUser.getUser());
+        }
+
+        return new StatusResponse(allStories.getFirst(), allStories.getSecond());
     }
 
     public FeedResponse getFeed(FeedRequest request) {
@@ -46,18 +60,18 @@ public class StatusService {
         } else if (request.getLimit() <= 0) {
             throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
         }
-        return getStatusDAO().getFeed(request);
+        return factoryInterface.getFeedDAO().getFeed(request);
     }
 
     public PostStatusResponse postStatus(PostStatusRequest request){
         if (request.getStatus() == null){
             throw new RuntimeException("[Bad Request] Request needs to have a completed status");
         }
-        return getStatusDAO().postStatus(request);
+        return factoryInterface.getStatusDAO().postStatus(request);
     }
 
-    StatusDAO getStatusDAO() {
-        return new StatusDAO();
+    StoryDAO getStatusDAO() {
+        return new StoryDAO();
     }
 
     FakeData getFakeData() {return FakeData.getInstance();}
