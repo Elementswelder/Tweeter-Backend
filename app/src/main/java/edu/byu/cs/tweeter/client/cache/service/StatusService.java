@@ -45,9 +45,9 @@ public class StatusService extends ServiceHandler<Runnable>{
             return statusFormat.format(userFormat.parse(LocalDate.now().toString() + " " + LocalTime.now().toString().substring(0, 8)));
         }
         catch (Exception ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     public List<String> parseURLs(String post) {

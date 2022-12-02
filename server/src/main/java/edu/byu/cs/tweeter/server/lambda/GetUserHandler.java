@@ -24,6 +24,7 @@ public class GetUserHandler extends KingHandler implements RequestHandler<GetUse
     @Override
     public GetUserResponse handleRequest(GetUserRequest request, Context context) {
         UserService service = new UserService(getFactoryInterface());
-        return service.getUser(request);
+        GetUserResponse response = service.getUser(request);
+        return response;
     }
 }

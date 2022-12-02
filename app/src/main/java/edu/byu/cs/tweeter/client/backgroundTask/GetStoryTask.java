@@ -49,10 +49,8 @@ public class GetStoryTask extends PagedStatusTask {
     protected void runTask() {
         try {
             String targetUserAlias = targetUser == null ? null : targetUser.getAlias();
-            String lastStatus = lastItem == null ? null : lastItem.getPost();
-            String lastStatusAlias = lastStatus == null ? null : lastItem.getUser().getAlias();
 
-            StatusRequest request = new StatusRequest(authToken, targetUserAlias, limit, lastStatus, lastStatusAlias);
+            StatusRequest request = new StatusRequest(authToken, targetUserAlias, limit, lastStatus);
             StatusResponse response = serverFacade.getStatus(request, StatusService.URL_LOAD_STATUS);
 
             if (response.isSuccess()) {

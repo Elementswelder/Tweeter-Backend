@@ -23,11 +23,14 @@ import edu.byu.cs.tweeter.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.request.UnfollowRequest;
 import edu.byu.cs.tweeter.server.dao.interfaces.FollowDAOInterface;
 import edu.byu.cs.tweeter.server.dao.pojobeans.FollowsTableBean;
+import edu.byu.cs.tweeter.util.Pair;
+import software.amazon.awssdk.core.pagination.sync.SdkIterable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbIndex;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.model.Page;
+import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -84,105 +87,92 @@ public class FollowDAO extends KingDAO implements FollowDAOInterface {
      *                other information required to satisfy the request.
      * @return the followees.
      */
-    public FollowingResponse getFollowees(FollowingRequest request) {
+    public Pair<List<User>, Boolean> getFollowees(FollowingRequest request) {
         assert request.getLimit() > 0;
         assert request.getFollowerAlias() != null;
-        try {
 
-            DynamoDbTable<FollowsTableBean> followeeCountTable = getDbClient().table("follows", TableSchema.fromBean(FollowsTableBean.class));
+        try {
+            DynamoDbTable<FollowsTableBean> table = getDbClient().table("follows", TableSchema.fromBean(FollowsTableBean.class));
+            Key key = Key.builder()
+                    .partitionValue(request.getFollowerAlias())
+                    .build();
 
             QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
-                    .queryConditional(QueryConditional.keyEqualTo(Key.builder()
-                            .partitionValue(request.getFollowerAlias())
-                            .build()))
-                    .scanIndexForward(true);
+                    .queryConditional(QueryConditional.keyEqualTo(key));
 
-            QueryEnhancedRequest queryEnhancedRequest = requestBuilder.build();
+            if(isNotEmptyString(request.getLastFolloweeAlias())) {
+                Map<String, AttributeValue> startKey = new HashMap<>();
+                startKey.put("follower_handle", AttributeValue.builder().s(request.getFollowerAlias()).build());
+                startKey.put("followee_handle", AttributeValue.builder().s(request.getLastFolloweeAlias()).build());
 
-            System.out.println("made it to the list");
-            List<FollowsTableBean> allFollowees = followeeCountTable.query(queryEnhancedRequest)
-                    .items()
-                    .stream()
-                    .collect(Collectors.toList());
-            // List<User> allFollowees = getDummyFollowees();
-            List<User> responseFollowees = new ArrayList<>(request.getLimit());
-
-            boolean hasMorePages = false;
-
-            if (request.getLimit() > 0) {
-                if (allFollowees != null) {
-                    int followeesIndex = getFolloweesStartingIndex(request.getLastFolloweeAlias(), allFollowees);
-
-                    for (int limitCounter = 0; followeesIndex < allFollowees.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
-                        User user = new User(allFollowees.get(followeesIndex).getFollower_first_name(),
-                                allFollowees.get(followeesIndex).getFollower_last_name(), allFollowees.get(followeesIndex).getFollower_handle(),
-                                allFollowees.get(followeesIndex).getFollower_image());
-                        responseFollowees.add(user);
-                    }
-
-                    hasMorePages = followeesIndex < allFollowees.size();
-                }
+                requestBuilder.exclusiveStartKey(startKey);
             }
-            return new FollowingResponse(responseFollowees, hasMorePages);
-        } catch (Exception ex){
-            ex.printStackTrace();
-            return new FollowingResponse("FAILED TO GET THE FOLLOWEES - FOLLOWDAO");
+
+            QueryEnhancedRequest queryRequest = requestBuilder.build();
+            List<FollowsTableBean> allFollowees = table.query(queryRequest).items().stream().limit(request.getLimit()).collect(Collectors.toList());
+            List<User> followerUser = new ArrayList<>();
+
+            for (FollowsTableBean follow : allFollowees) {
+                User user = new User(follow.getFollower_first_name(), follow.getFollower_last_name(),
+                        follow.getFollower_handle(), follow.getFollower_image());
+                followerUser.add(user);
+            }
+            boolean hasMorePages = allFollowees.size() == request.getLimit();
+            return new Pair<>(followerUser, hasMorePages);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
-    public FollowerResponse getFollowers(FollowersRequest request) {
+    public Pair<List<User>, Boolean> getFollowers(FollowersRequest request) {
         assert request.getLimit() > 0;
         assert request.getFollowerAlias() != null;
 
         try {
-            DynamoDbIndex<FollowsTableBean> followerCountTable = getDbClient()
-                    .table("follows", TableSchema.fromBean(FollowsTableBean.class))
-                    .index("followIndex");
+            DynamoDbIndex<FollowsTableBean> index = getDbClient().table("follows", TableSchema.fromBean(FollowsTableBean.class)).index("followIndex");
+            Key key = Key.builder()
+                    .partitionValue(request.getFollowerAlias())
+                    .build();
 
             QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
-                    .queryConditional(QueryConditional.keyEqualTo(Key.builder()
-                            .partitionValue(request.getFollowerAlias())
-                            .build()))
-                    .scanIndexForward(true);
+                    .queryConditional(QueryConditional.keyEqualTo(key)).limit(request.getLimit());
 
-            if (isNotEmptyString(request.getLastFolloweeAlias())){
+
+            if(isNotEmptyString(request.getLastFolloweeAlias())) {
                 Map<String, AttributeValue> startKey = new HashMap<>();
-                startKey.put("follow_index", AttributeValue.builder().s(request.))
+                startKey.put("followee_handle", AttributeValue.builder().s(request.getFollowerAlias()).build());
+                startKey.put("follower_handle", AttributeValue.builder().s(request.getLastFolloweeAlias()).build());
+
+                requestBuilder.exclusiveStartKey(startKey);
             }
 
-            QueryConditional queryConditional = QueryConditional.keyEqualTo(Key.builder()
-                    .partitionValue(request.getFollowerAlias())
-                    .build());
-            System.out.println("made it to the list for iterator");
-            Iterator<Page<FollowsTableBean>> result = followerCountTable.query(QueryEnhancedRequest.builder().queryConditional(queryConditional).build()).iterator();
-            Page<FollowsTableBean> list = result.next();
+            List<FollowsTableBean> allFollowers = new ArrayList<>();
+            QueryEnhancedRequest queryRequest = requestBuilder.build();
+            SdkIterable<Page<FollowsTableBean>> result = index.query(queryRequest);
+            PageIterable<FollowsTableBean> pages = PageIterable.create(result);
 
-
-            List<FollowsTableBean> allFollowees = list.items();
-            List<User> responseFollowees = new ArrayList<>(request.getLimit());
-
-            boolean hasMorePages = false;
-
-            if (request.getLimit() > 0) {
-                if (allFollowees != null) {
-                    int followeesIndex = getFollowersStartingIndex(request.getLastFolloweeAlias(), allFollowees);
-
-                    for (int limitCounter = 0; followeesIndex < allFollowees.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
-                        User user = new User(allFollowees.get(followeesIndex).getFollowing_first_name(),
-                                allFollowees.get(followeesIndex).getFollowing_last_name(), allFollowees.get(followeesIndex).getFollowee_handle(),
-                                allFollowees.get(followeesIndex).getFollowing_image());
-                        responseFollowees.add(user);
-                    }
-
-                    hasMorePages = followeesIndex < allFollowees.size();
-
-                }
+            pages.stream().limit(1).forEach(followDTOPage -> followDTOPage.items().forEach(v -> allFollowers.add(v)));
+            List<User> followerAliases = new ArrayList<>();
+            for (FollowsTableBean follow : allFollowers) {
+                User user = new User(follow.getFollowing_first_name(), follow.getFollowing_last_name(),
+                        follow.getFollowee_handle(), follow.getFollowing_image());
+                followerAliases.add(user);
             }
-            return new FollowerResponse(responseFollowees, hasMorePages);
-        } catch (Exception ex){
-            ex.printStackTrace();
-            return new FollowerResponse("FAILED TO GET FOLLOWERS - FOLLOW DAO");
+
+            boolean hasMorePages = allFollowers.size() == request.getLimit();
+
+            return new Pair<>(followerAliases, hasMorePages);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
+    }
+
+
+    private boolean isNotEmptyString(String lastFolloweeAlias) {
+        return (lastFolloweeAlias.length() > 0 && lastFolloweeAlias != null);
     }
 
 

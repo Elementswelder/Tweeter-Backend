@@ -1,6 +1,7 @@
 package edu.byu.cs.tweeter.request;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
+import edu.byu.cs.tweeter.model.domain.Status;
 
 /**
  * Contains all the information needed to make a request to have the server return the next page of
@@ -11,35 +12,24 @@ public class StatusRequest {
     private AuthToken authToken;
     private String followerAlias;
     private int limit;
-    private String lastStatusString;
-    private String lastStatusAlias;
+    private Status status;
 
     /**
      * Allows construction of the object from Json. Private so it won't be called in normal code.
      */
-    private StatusRequest() {}
+    public StatusRequest() {}
 
 
-    public StatusRequest(AuthToken authToken, String followerAlias, int limit, String lastStatusString, String lastStatusAlias) {
+    public StatusRequest(AuthToken authToken, String followerAlias, int limit, Status lastStatus) {
         this.authToken = authToken;
         this.followerAlias = followerAlias;
         this.limit = limit;
-        this.lastStatusString = lastStatusString;
-        this.lastStatusAlias = lastStatusAlias;
+        this.status = lastStatus;
     }
 
     public String getFollowerAlias() {
         return followerAlias;
     }
-
-    public String getLastStatusAlias() {
-        return lastStatusAlias;
-    }
-
-    public void setLastStatusAlias(String lastStatusAlias) {
-        this.lastStatusAlias = lastStatusAlias;
-    }
-
     /**
      * Returns the auth token of the user who is making the request.
      *
@@ -63,7 +53,7 @@ public class StatusRequest {
      *
      * @return the follower.
      */
-    public String getLastStatusString() {
+    public String getLastStatusTime() {
         return followerAlias;
     }
 
@@ -100,12 +90,12 @@ public class StatusRequest {
      *
      * @return the last followee.
      */
-    public String lastStatusString() {
-        return lastStatusString;
+    public Status lastStatus() {
+        return status;
     }
 
 
-    public void setLastStatusString(String lastStatusString) {
-        this.lastStatusString = lastStatusString;
+    public void setLastStatusTime(Status lastStatusTime) {
+        this.status = lastStatusTime;
     }
 }

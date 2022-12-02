@@ -10,19 +10,24 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 public class StoryTableBean {
 
     public String post;
-    public long timestamp;
+    public String time_stamp;
     public List<String> urls;
     public List<String> mentions;
-    public String alias;
+    public String user_alias;
 
     public StoryTableBean(){}
 
-    public StoryTableBean(String post, long timestamp, List<String> urls, List<String> mentions, String alias) {
+    public StoryTableBean(String post, String time_stamp, List<String> urls, List<String> mentions, String user_alias) {
         this.post = post;
-        this.timestamp = timestamp;
+        this.time_stamp = time_stamp;
         this.urls = urls;
         this.mentions = mentions;
-        this.alias = alias;
+        this.user_alias = user_alias;
+    }
+
+    @DynamoDbPartitionKey
+    public String getUser_alias() {
+        return user_alias;
     }
 
     public String getPost() {
@@ -32,13 +37,14 @@ public class StoryTableBean {
     public void setPost(String post) {
         this.post = post;
     }
+
     @DynamoDbSortKey
-    public long getTimestamp() {
-        return timestamp;
+    public String getTime_stamp() {
+        return time_stamp;
     }
 
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
+    public void setTime_stamp(String timestamp) {
+        this.time_stamp = timestamp;
     }
 
     public List<String> getUrls() {
@@ -56,12 +62,8 @@ public class StoryTableBean {
     public void setMentions(List<String> mentions) {
         this.mentions = mentions;
     }
-    @DynamoDbPartitionKey
-    public String getAlias() {
-        return alias;
-    }
 
-    public void setAlias(String alias) {
-        this.alias = alias;
+    public void setUser_alias(String alias) {
+        this.user_alias = alias;
     }
 }

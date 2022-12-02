@@ -58,7 +58,7 @@ public class StoryDAO extends KingDAO implements StatusDAOInterface {
     public Pair<List<Status>, Boolean> getStatuses(StatusRequest request) {
         // TODO: Generates dummy data. Replace with a real implementation.
         assert request.getLimit() > 0;
-        assert request.getLastStatusString() != null;
+        assert request.getLastStatusTime() != null;
 
         try {
             DynamoDbTable<StoryTableBean> storyTable = getDbClient().table("StoryTable", TableSchema.fromBean(StoryTableBean.class));
@@ -69,13 +69,13 @@ public class StoryDAO extends KingDAO implements StatusDAOInterface {
                             .build()))
                     .scanIndexForward(false);
 
-            if(isNotEmptyString(request.getLastStatusString())){
+           /* if(isNotEmptyString(request.getLastStatusTime())){
                 Map<String, AttributeValue> startKey = new HashMap<>();
                 startKey.put("user_alias", AttributeValue.builder().s(request.getFollowerAlias()).build());
-                startKey.put("time_stamp", AttributeValue.builder().s(request.getLastStatusString()).build());
+                startKey.put("time_stamp", AttributeValue.builder().s(request.lastStatus().getDate()).build());
 
                 requestBuilder.exclusiveStartKey(startKey);
-            }
+            } */
 
             QueryEnhancedRequest queryEnhancedRequest = requestBuilder.build();
 
@@ -90,11 +90,12 @@ public class StoryDAO extends KingDAO implements StatusDAOInterface {
             List<Status> responseStatuses = new ArrayList<>(request.getLimit());
 
             for (StoryTableBean story : allStories){
-                Date date = new Date(story.getTimestamp());
-                responseStatuses.add(new Status(story.getPost(), date.toString(), story.getUrls(), story.getMentions()));
+               // Date date = new Date(story.getTime_stamp());
+                responseStatuses.add(new Status(story.getPost(), DateTime.now().toString(), story.getUrls(), story.getMentions()));
 
             }
             boolean hasMorePages = responseStatuses.size() == request.getLimit();
+            System.out.println(responseStatuses.get(0).post);
             return new Pair<>(responseStatuses, hasMorePages);
         } catch (Exception e) {
             e.printStackTrace();
@@ -135,9 +136,10 @@ public class StoryDAO extends KingDAO implements StatusDAOInterface {
     public PostStatusResponse postStatus(PostStatusRequest request){
         assert request.getStatus() != null;
         System.out.println("Trying to post a status");
+
         try {
             DynamoDbTable<StoryTableBean> storyTable = getDbClient().table("StoryTable", TableSchema.fromBean(StoryTableBean.class));
-            StoryTableBean newPost = new StoryTableBean(request.getStatus().getPost(), DateTime.now().getMillis(),
+            StoryTableBean newPost = new StoryTableBean(request.getStatus().getPost(), DateTime.now().toString(),
                     request.getStatus().urls, request.getStatus().mentions, request.getStatus().getUser().getAlias());
 
             storyTable.putItem(newPost);
@@ -187,7 +189,7 @@ public class StoryDAO extends KingDAO implements StatusDAOInterface {
             // This is a paged request for something after the first page. Find the first item
             // we should return
             for (int i = 0; i < allStatuses.size(); i++) {
-                if(lastStatusDate.equals(allStatuses.get(i).getPost()) && lastUserAlias.equals(allStatuses.get(i).getAlias())) {
+                if(lastStatusDate.equals(allStatuses.get(i).getPost()) && lastUserAlias.equals(allStatuses.get(i).getUser_alias())) {
                     // We found the index of the last item returned last time. Increment to get
                     // to the first one we should return
                     followeesIndex = i + 1;

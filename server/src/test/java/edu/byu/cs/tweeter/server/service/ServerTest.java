@@ -24,6 +24,7 @@ import edu.byu.cs.tweeter.response.GetUserResponse;
 import edu.byu.cs.tweeter.response.LoginResponse;
 import edu.byu.cs.tweeter.response.PostStatusResponse;
 import edu.byu.cs.tweeter.response.RegisterResponse;
+import edu.byu.cs.tweeter.response.StatusResponse;
 import edu.byu.cs.tweeter.server.dao.AuthTokenDAO;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
 import edu.byu.cs.tweeter.server.dao.KingDAO;
@@ -32,14 +33,32 @@ import edu.byu.cs.tweeter.server.dao.UserDAO;
 import edu.byu.cs.tweeter.server.dao.pojobeans.AuthTokenBean;
 import edu.byu.cs.tweeter.server.dao.pojobeans.FollowsTableBean;
 import edu.byu.cs.tweeter.server.lambda.KingHandler;
+import edu.byu.cs.tweeter.util.Pair;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
 public class ServerTest {
 
     public static void main(String args[]) throws ParseException {
-        testGetFollowers();
+        testGetStory();
 
+    }
+
+    private static void testGetStory() {
+        List<String> urls = new ArrayList<>();
+        urls.add("www.google.com");
+        urls.add("www.amazon.com");
+        List<String> mentions = new ArrayList<>();
+        mentions.add("@FreddyBoi");
+        mentions.add("@CoolDude");
+        AuthToken authToken = new AuthToken("test", "test");
+        User user = new User("freddy", "last", "@FreddyBoi", "image");
+        Status status = new Status("Cool post bro", user, "time", urls, mentions);
+        StatusRequest request = new StatusRequest(new AuthToken("test","test"), "@FreddyBoi", 10,
+                status);
+        StoryDAO dao = new StoryDAO();
+        Pair<List<Status>, Boolean> response = dao.getStatuses(request);
+        System.out.println("test'");
     }
 
     private static void testRegister() throws ParseException {
@@ -91,7 +110,7 @@ public class ServerTest {
 
         FollowDAO followDAO = new FollowDAO();
 
-        FollowingResponse response = followDAO.getFollowees(request);
+        Pair<List<User>, Boolean> response = followDAO.getFollowees(request);
         System.out.println("Test");
     }
 
@@ -100,7 +119,7 @@ public class ServerTest {
 
         FollowDAO followDAO = new FollowDAO();
 
-        FollowerResponse response = followDAO.getFollowers(request);
+        Pair<List<User>, Boolean> response = followDAO.getFollowers(request);
         System.out.println("Test");
     }
 

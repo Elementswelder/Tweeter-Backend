@@ -1,5 +1,8 @@
 package edu.byu.cs.tweeter.server.service;
 
+import java.util.List;
+
+import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.request.FollowRequest;
 import edu.byu.cs.tweeter.request.FollowersRequest;
 import edu.byu.cs.tweeter.request.FollowingRequest;
@@ -12,6 +15,7 @@ import edu.byu.cs.tweeter.response.IsFollowerResponse;
 import edu.byu.cs.tweeter.response.UnfollowResponse;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
 import edu.byu.cs.tweeter.server.dao.interfaces.DAOFactoryInterface;
+import edu.byu.cs.tweeter.util.Pair;
 
 /**
  * Contains the business logic for getting the users a user is following.
@@ -43,7 +47,12 @@ public class FollowService {
         } else if (request.getLimit() <= 0) {
             throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
         }
-        return factoryInterface.getFollowDAO().getFollowees(request);
+        Pair<List<User>, Boolean> followerUsers = factoryInterface.getFollowDAO().getFollowees(request);
+        if (followerUsers == null){
+            return new FollowingResponse("COULD NOT GET THE FOLLOWEES");
+        }
+        FollowingResponse response = new FollowingResponse(followerUsers.getFirst(), followerUsers.getSecond());
+        return response;
     }
 
     public FollowerResponse getFollowers(FollowersRequest request) {
@@ -55,7 +64,11 @@ public class FollowService {
         } else if (request.getLimit() <= 0) {
             throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
         }
-        return factoryInterface.getFollowDAO().getFollowers(request);
+        Pair<List<User>, Boolean> followeesPair = factoryInterface.getFollowDAO().getFollowers(request);
+        if (followeesPair == null){
+            return new FollowerResponse("COULD NOT GET THE FOLLOWERS");
+        }
+        return new FollowerResponse(followeesPair.getFirst(), followeesPair.getSecond());
     }
 
 

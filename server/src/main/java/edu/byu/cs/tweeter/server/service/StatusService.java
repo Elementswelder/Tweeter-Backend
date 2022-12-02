@@ -3,7 +3,6 @@ package edu.byu.cs.tweeter.server.service;
 import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.Status;
-import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.request.GetUserRequest;
 import edu.byu.cs.tweeter.response.FeedResponse;
 import edu.byu.cs.tweeter.response.GetUserResponse;
@@ -39,19 +38,26 @@ public class StatusService {
      * @return the followees.
      */
     public StatusResponse getStatuses(StatusRequest request) {
-        if (request.getLastStatusString() == null) {
+        if (request.getLastStatusTime() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have a follower alias");
         } else if (request.getLimit() <= 0) {
             throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
         }
-        Pair<List<Status>, Boolean> allStories = factoryInterface.getStatusDAO().getStatuses(request);
-        GetUserResponse currentUser = factoryInterface.getUserDAO().getUser(
-                new GetUserRequest(request.getAuthToken(), request.getFollowerAlias()));
-        for(int i = 0; i < allStories.getFirst().size(); i++){
-            allStories.getFirst().get(i).setUser(currentUser.getUser());
-        }
+        Pair<List<Status>, Boolean> allStories = null;
+        try {
+            allStories = factoryInterface.getStatusDAO().getStatuses(request);
+            GetUserResponse currentUser = factoryInterface.getUserDAO().getUser(
+                    new GetUserRequest(request.getAuthToken(), request.getFollowerAlias()));
 
-        return new StatusResponse(allStories.getFirst(), allStories.getSecond());
+            for(int i = 0; i < allStories.getFirst().size(); i++){
+                System.out.println("Added story number: " + i);
+                allStories.getFirst().get(i).setUser(currentUser.getUser());
+            }
+            return new StatusResponse(allStories.getFirst(), allStories.getSecond());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new StatusResponse("FAILED TO ADD USERES TO THE STATUS - STATUSSERVICE");
+        }
     }
 
     public FeedResponse getFeed(FeedRequest request) {
