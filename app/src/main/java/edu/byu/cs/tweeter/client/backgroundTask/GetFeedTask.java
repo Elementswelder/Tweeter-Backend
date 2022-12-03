@@ -49,7 +49,7 @@ public class GetFeedTask extends PagedStatusTask {
     protected void runTask() {
         try {
             String targetUserAlias = targetUser == null ? null : targetUser.getAlias();
-            String lastStatus = lastItem == null ? null : lastItem.getDate();
+          //  String lastStatus = lastItem == null ? null : lastItem.getDate();
 
             FeedRequest request = new FeedRequest(authToken, targetUserAlias, limit, lastStatus);
             FeedResponse response = serverFacade.getFeed(request, StatusService.URL_LOAD_STATUS);

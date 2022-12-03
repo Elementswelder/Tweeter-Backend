@@ -96,27 +96,28 @@ public class FollowDAO extends KingDAO implements FollowDAOInterface {
             Key key = Key.builder()
                     .partitionValue(request.getFollowerAlias())
                     .build();
-
+            System.out.println("GET FOLLOWEES 1 out of 3 ");
             QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
                     .queryConditional(QueryConditional.keyEqualTo(key));
 
-            if(isNotEmptyString(request.getLastFolloweeAlias())) {
+           /* if(isNotEmptyString(request.getLastFolloweeAlias())) {
                 Map<String, AttributeValue> startKey = new HashMap<>();
                 startKey.put("follower_handle", AttributeValue.builder().s(request.getFollowerAlias()).build());
                 startKey.put("followee_handle", AttributeValue.builder().s(request.getLastFolloweeAlias()).build());
 
                 requestBuilder.exclusiveStartKey(startKey);
-            }
-
+            } */
+            System.out.println("2 out of 3 ");
             QueryEnhancedRequest queryRequest = requestBuilder.build();
             List<FollowsTableBean> allFollowees = table.query(queryRequest).items().stream().limit(request.getLimit()).collect(Collectors.toList());
             List<User> followerUser = new ArrayList<>();
 
             for (FollowsTableBean follow : allFollowees) {
-                User user = new User(follow.getFollower_first_name(), follow.getFollower_last_name(),
-                        follow.getFollower_handle(), follow.getFollower_image());
+                User user = new User(follow.getFollowing_first_name(), follow.getFollowing_last_name(),
+                        follow.getFollowee_handle(), follow.getFollower_image());
                 followerUser.add(user);
             }
+            System.out.println("3 out of 3 " + allFollowees.size());
             boolean hasMorePages = allFollowees.size() == request.getLimit();
             return new Pair<>(followerUser, hasMorePages);
         } catch (Exception e) {
@@ -134,19 +135,19 @@ public class FollowDAO extends KingDAO implements FollowDAOInterface {
             Key key = Key.builder()
                     .partitionValue(request.getFollowerAlias())
                     .build();
-
+            System.out.println("GET FOLLOWERS 1 out of 3 ");
             QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
                     .queryConditional(QueryConditional.keyEqualTo(key)).limit(request.getLimit());
 
 
-            if(isNotEmptyString(request.getLastFolloweeAlias())) {
+           /* if(isNotEmptyString(request.getLastFolloweeAlias())) {
                 Map<String, AttributeValue> startKey = new HashMap<>();
                 startKey.put("followee_handle", AttributeValue.builder().s(request.getFollowerAlias()).build());
                 startKey.put("follower_handle", AttributeValue.builder().s(request.getLastFolloweeAlias()).build());
 
                 requestBuilder.exclusiveStartKey(startKey);
-            }
-
+            } */
+            System.out.println("2 out of 3 ");
             List<FollowsTableBean> allFollowers = new ArrayList<>();
             QueryEnhancedRequest queryRequest = requestBuilder.build();
             SdkIterable<Page<FollowsTableBean>> result = index.query(queryRequest);
@@ -155,11 +156,12 @@ public class FollowDAO extends KingDAO implements FollowDAOInterface {
             pages.stream().limit(1).forEach(followDTOPage -> followDTOPage.items().forEach(v -> allFollowers.add(v)));
             List<User> followerAliases = new ArrayList<>();
             for (FollowsTableBean follow : allFollowers) {
-                User user = new User(follow.getFollowing_first_name(), follow.getFollowing_last_name(),
-                        follow.getFollowee_handle(), follow.getFollowing_image());
+                User user = new User(follow.getFollower_first_name(), follow.getFollower_last_name(),
+                        follow.getFollower_handle(), follow.getFollower_image());
                 followerAliases.add(user);
             }
-
+            System.out.println("3 out of 3 " + followerAliases.size());
+            System.out.println(followerAliases.get(0).getAlias());
             boolean hasMorePages = allFollowers.size() == request.getLimit();
 
             return new Pair<>(followerAliases, hasMorePages);

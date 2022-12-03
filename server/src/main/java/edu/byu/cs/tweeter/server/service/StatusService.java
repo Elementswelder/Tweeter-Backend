@@ -66,7 +66,12 @@ public class StatusService {
         } else if (request.getLimit() <= 0) {
             throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
         }
-        return factoryInterface.getFeedDAO().getFeed(request);
+        Pair<List<Status>, Boolean> list = factoryInterface.getFeedDAO().getFeed(request);
+
+        if (list == null){
+            return new FeedResponse("FAILED TO GET FEED IN THE GETFEED");
+        }
+        return new FeedResponse(list.getFirst(), list.getSecond());
     }
 
     public PostStatusResponse postStatus(PostStatusRequest request){

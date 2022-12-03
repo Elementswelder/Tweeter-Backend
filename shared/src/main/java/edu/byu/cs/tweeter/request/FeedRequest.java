@@ -1,6 +1,7 @@
 package edu.byu.cs.tweeter.request;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
+import edu.byu.cs.tweeter.model.domain.Status;
 
 /**
  * Contains all the information needed to make a request to have the server return the next page of
@@ -11,7 +12,7 @@ public class FeedRequest {
     private AuthToken authToken;
     private String followerAlias;
     private int limit;
-    private String lastStatusString;
+    private Status status;
 
     /**
      * Allows construction of the object from Json. Private so it won't be called in normal code.
@@ -19,11 +20,23 @@ public class FeedRequest {
     private FeedRequest() {}
 
 
-    public FeedRequest(AuthToken authToken, String followerAlias, int limit, String lastStatusString) {
+    public FeedRequest(AuthToken authToken, String followerAlias, int limit, Status status) {
         this.authToken = authToken;
         this.followerAlias = followerAlias;
         this.limit = limit;
-        this.lastStatusString = lastStatusString;
+        this.status = status;
+    }
+
+    public String getFollowerAlias() {
+        return followerAlias;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     /**
@@ -86,12 +99,12 @@ public class FeedRequest {
      *
      * @return the last followee.
      */
-    public String lastStatusString() {
-        return lastStatusString;
+    public Status lastStatusString() {
+        return status;
     }
 
 
-    public void setLastStatusString(String lastStatusString) {
-        this.lastStatusString = lastStatusString;
+    public void setLastStatusString(Status lastStatusString) {
+        this.status = lastStatusString;
     }
 }
