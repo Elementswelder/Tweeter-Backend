@@ -8,11 +8,8 @@ import java.util.stream.Collectors;
 
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.request.FeedRequest;
-import edu.byu.cs.tweeter.request.StatusRequest;
-import edu.byu.cs.tweeter.response.FeedResponse;
 import edu.byu.cs.tweeter.server.dao.interfaces.FeedDAOInterface;
 import edu.byu.cs.tweeter.server.dao.pojobeans.FeedTableBean;
-import edu.byu.cs.tweeter.server.dao.pojobeans.StoryTableBean;
 import edu.byu.cs.tweeter.util.Pair;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
@@ -64,7 +61,6 @@ public class FeedDAO extends KingDAO implements FeedDAOInterface {
             }
             boolean hasMorePages = responseStatuses.size() == request.getLimit();
             System.out.println("3 out of 3 " + allStories.size());
-            System.out.println(responseStatuses.get(0).post);
             return new Pair<>(responseStatuses, hasMorePages);
         } catch (Exception e) {
             e.printStackTrace();

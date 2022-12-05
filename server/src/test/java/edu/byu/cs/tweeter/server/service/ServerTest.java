@@ -40,7 +40,7 @@ import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 public class ServerTest {
 
     public static void main(String args[]) throws ParseException {
-        testGetStory();
+        testValidAuth();
 
     }
 
@@ -98,10 +98,10 @@ public class ServerTest {
     private static void testValidAuth() throws ParseException {
 
 
-        String auth = "b6e5b958-0520-4199-8933-0faa278faec3";
-
-        KingDAO kingDAO = new KingDAO();
-        boolean valid = kingDAO.checkValidAuth(auth);
+        String auth = "321e1f35-62bb-42be-8490-c8f8cbfed7dd";
+        KingHandler kingHandler = new KingHandler();
+        KingService kingService = new KingService(kingHandler.getFactoryInterface());
+        boolean valid = kingService.checkValidAuth(auth);
         System.out.println(valid);
     }
 

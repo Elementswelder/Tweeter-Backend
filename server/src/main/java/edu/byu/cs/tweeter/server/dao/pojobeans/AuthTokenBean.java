@@ -2,30 +2,34 @@ package edu.byu.cs.tweeter.server.dao.pojobeans;
 
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
 @DynamoDbBean
 public class AuthTokenBean {
 
-    public String authtoken;
+    public String auth_token;
     public String date;
     public String alias;
 
+
     public AuthTokenBean(){}
 
-    public AuthTokenBean(String auth, String date, String alias){
-        this.authtoken = auth;
+    public AuthTokenBean(String auth_token, String date, String alias){
+        this.auth_token = auth_token;
         this.date = date;
         this.alias = alias;
     }
 
     @DynamoDbPartitionKey
-    public String getauthtoken() {
-        return authtoken;
+    public String getAuth_token() {
+        return auth_token;
     }
 
-    public void setauthtoken(String authtoken) {
-        this.authtoken = authtoken;
+    public void setAuth_token(String auth_token) {
+        this.auth_token = auth_token;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     public String getDate() {
@@ -36,12 +40,9 @@ public class AuthTokenBean {
         this.date = date;
     }
 
-    @DynamoDbSortKey
-    public String getalias() {
+    public String getAlias() {
         return alias;
     }
 
-    public void setalias(String alias) {
-        this.alias = alias;
-    }
+
 }

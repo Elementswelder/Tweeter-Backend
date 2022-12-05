@@ -121,6 +121,7 @@ public class UserDAO extends KingDAO implements UserDAOInterface {
             DynamoDbTable<UserTableBean> followingCount = getDbClient().table("UserTable", TableSchema.fromBean(UserTableBean.class));
             Key key = Key.builder().partitionValue(request.getUser().getAlias()).build();
             user = followingCount.getItem(key);
+            System.out.println(user.getAlias() + " has this many following: " + user.getFollowing());
             return new FollowingCountResponse(user.getFollowing(), request.getAuthToken());
         } catch (Exception e) {
             e.printStackTrace();
@@ -135,6 +136,7 @@ public class UserDAO extends KingDAO implements UserDAOInterface {
             DynamoDbTable<UserTableBean> followerCountTable = getDbClient().table("UserTable", TableSchema.fromBean(UserTableBean.class));
             Key key = Key.builder().partitionValue(request.getUser().getAlias()).build();
             user = followerCountTable.getItem(key);
+            System.out.println(user.getAlias() + " has this many followers: " + user.getFollowing());
             return new FollowerCountResponse(user.getFollowers(), request.getAuthToken());
         } catch (Exception e) {
             e.printStackTrace();
@@ -160,13 +162,19 @@ public class UserDAO extends KingDAO implements UserDAOInterface {
 
             if (currentUserTable != null && followUserTable != null){
                 if (following){
+                    System.out.println("Adding " + followUser.getAlias() + " for : " + currentUser.getAlias());
                     currentUserTable.setFollowing(currentUserTable.getFollowing()+1);
                     followUserTable.setFollowers(followUserTable.getFollowers()+1);
+                    userTable.updateItem(currentUserTable);
+                    userTable.updateItem(followUserTable);
                     return true;
                 }
                 else {
+                    System.out.println("Removing " + followUser.getAlias() + " from " + currentUser.getAlias());
                     currentUserTable.setFollowing(currentUserTable.getFollowing()-1);
                     followUserTable.setFollowers(followUserTable.getFollowers()-1);
+                    userTable.updateItem(currentUserTable);
+                    userTable.updateItem(followUserTable);
                     return true;
                 }
 

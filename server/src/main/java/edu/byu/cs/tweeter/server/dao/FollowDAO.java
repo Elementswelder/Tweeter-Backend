@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import javax.security.auth.kerberos.KerberosTicket;
 
+import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.response.FollowResponse;
 import edu.byu.cs.tweeter.response.FollowerResponse;
@@ -51,16 +52,24 @@ public class FollowDAO extends KingDAO implements FollowDAOInterface {
         assert request.getCurrentUser() != null;
         assert request.getFollowee() != null;
         try {
-            DynamoDbTable<FollowsTableBean> table = enhancedClient.table("follows", TableSchema.fromBean(FollowsTableBean.class));
-            Key key = Key.builder().partitionValue(request.getCurrentUser().getAlias())
-                    .sortValue(request.getFollowee().getAlias()).build();
-            FollowsTableBean tableBean = table.getItem(key);
-
-            if (tableBean == null){
+            System.out.println("In isFollower");
+            System.out.println("Follower: " + request.getCurrentUser().getAlias() + " Followee: " + request.getFollowee().getAlias());
+            DynamoDbTable<FollowsTableBean> table = getDbClient().table("follows", TableSchema.fromBean(FollowsTableBean.class));
+            try {
+                Key key = Key.builder().partitionValue(request.getFollowee().getAlias())
+                        .sortValue(request.getCurrentUser().getAlias()).build();
+                FollowsTableBean tableBean = table.getItem(key);
+                if (tableBean == null){
+                    System.out.println("false");
+                    return new IsFollowerResponse(false, request.getAuthToken());
+                }
+                else {
+                    System.out.println("YES HE IS A FOLLOWER");
+                    return new IsFollowerResponse(true, request.getAuthToken());
+                }
+            } catch (NullPointerException ex){
+                ex.printStackTrace();
                 return new IsFollowerResponse(false, request.getAuthToken());
-            }
-            else {
-                return new IsFollowerResponse(true, request.getAuthToken());
             }
         } catch (Exception ex){
             ex.printStackTrace();
@@ -69,10 +78,31 @@ public class FollowDAO extends KingDAO implements FollowDAOInterface {
     }
 
     public FollowResponse followUser(FollowRequest request){
+        System.out.println("inside follow user");
+        DynamoDbTable<FollowsTableBean> table = getDbClient().table("follows", TableSchema.fromBean(FollowsTableBean.class));
+        try {
+            FollowsTableBean addFollow = new FollowsTableBean(request.getCurrentUser().getAlias(), request.getCurrentUser().getFirstName(),
+                    request.getCurrentUser().getLastName(), request.getCurrentUser().getImageUrl(), request.getFollowee().getAlias(),
+                    request.getFollowee().getFirstName(), request.getFollowee().getLastName(), request.getFollowee().getImageUrl());
+            table.putItem(addFollow);
+        } catch (Exception ex){
+            ex.printStackTrace();
+            return new FollowResponse("UNABLE TO ADD A NEW USER TO THE DATABASE");
+        }
         return new FollowResponse(request.getAuthToken());
     }
 
     public UnfollowResponse unFollowUser(UnfollowRequest request){
+        System.out.println("inside unfollow user");
+        DynamoDbTable<FollowsTableBean> table = getDbClient().table("follows", TableSchema.fromBean(FollowsTableBean.class));
+        try {
+            Key key = Key.builder().partitionValue(request.getCurrentUser().getAlias())
+                    .sortValue(request.getFollowee().getAlias()).build();
+            table.deleteItem(key);
+        } catch (Exception ex){
+            ex.printStackTrace();
+            return new UnfollowResponse("UNABLE TO REMOVE A NEW USER TO THE DATABASE");
+        }
         return new UnfollowResponse(request.getAuthToken());
     }
 
@@ -114,7 +144,7 @@ public class FollowDAO extends KingDAO implements FollowDAOInterface {
 
             for (FollowsTableBean follow : allFollowees) {
                 User user = new User(follow.getFollowing_first_name(), follow.getFollowing_last_name(),
-                        follow.getFollowee_handle(), follow.getFollower_image());
+                        follow.getFollowee_handle(), follow.getFollowing_image());
                 followerUser.add(user);
             }
             System.out.println("3 out of 3 " + allFollowees.size());
@@ -161,7 +191,6 @@ public class FollowDAO extends KingDAO implements FollowDAOInterface {
                 followerAliases.add(user);
             }
             System.out.println("3 out of 3 " + followerAliases.size());
-            System.out.println(followerAliases.get(0).getAlias());
             boolean hasMorePages = allFollowers.size() == request.getLimit();
 
             return new Pair<>(followerAliases, hasMorePages);

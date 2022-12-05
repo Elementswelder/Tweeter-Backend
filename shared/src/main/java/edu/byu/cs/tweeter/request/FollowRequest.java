@@ -16,7 +16,7 @@ public class FollowRequest {
      * Allows construction of the object from Json. Private so it won't be called in normal code.
      */
 
-    private FollowRequest() {}
+    public FollowRequest() {}
 
     public FollowRequest(AuthToken authToken, User follower, User currentUser) {
         this.authToken = authToken;

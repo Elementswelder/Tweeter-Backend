@@ -59,32 +59,4 @@ public class KingDAO {
     }
 
 
-    public boolean checkValidAuth(String authToken){
-        try {
-            DynamoDbTable<AuthTokenBean> authTokenTable = getDbClient().table("AuthTokenTable", TableSchema.fromBean(AuthTokenBean.class));
-            Key key = Key.builder().partitionValue(authToken).build();
-            AuthTokenBean auth = authTokenTable.getItem(key);
-
-            System.out.println("DEBUG - AUTHTOKEN DATE FROM TABLE: " + auth.getDate());
-            SimpleDateFormat format = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
-            String dateNow = format.format(new Date());
-            System.out.println("DEBUG - AUTHTOKEN DATE NOW: " + dateNow);
-
-            //d1 is the originally logged in authtoken
-            Date d1 = format.parse(auth.getDate());
-            //d2 is the current time
-            Date d2 = format.parse(dateNow);
-
-            float floatyboi = ((d2.getTime() - d1.getTime()) / 1000) / 60;
-            System.out.println("TIME AFTER MATH- MINUTES: " + floatyboi);
-            if (floatyboi <= 5){
-                return true;
-            }
-
-        } catch (Exception ex){
-            ex.printStackTrace();
-        }
-        return false;
-    }
-
 }

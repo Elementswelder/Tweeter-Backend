@@ -20,6 +20,7 @@ public class StatusService extends ServiceHandler<Runnable>{
 
     public static final String URL_LOAD_STATUS = "/getstory";
     public static final String URL_POST_STATUS = "/poststatus";
+    public static final String URL_GET_FEED = "/getfeed";
 
     private StatusService statusService;
 

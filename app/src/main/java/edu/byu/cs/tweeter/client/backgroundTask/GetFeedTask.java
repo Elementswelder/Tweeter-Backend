@@ -52,7 +52,7 @@ public class GetFeedTask extends PagedStatusTask {
           //  String lastStatus = lastItem == null ? null : lastItem.getDate();
 
             FeedRequest request = new FeedRequest(authToken, targetUserAlias, limit, lastStatus);
-            FeedResponse response = serverFacade.getFeed(request, StatusService.URL_LOAD_STATUS);
+            FeedResponse response = serverFacade.getFeed(request, StatusService.URL_GET_FEED);
 
             if (response.isSuccess()) {
                 this.items = response.getStatuses();

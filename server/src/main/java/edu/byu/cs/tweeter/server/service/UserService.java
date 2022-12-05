@@ -24,13 +24,12 @@ import edu.byu.cs.tweeter.server.dao.interfaces.DAOFactoryInterface;
 import edu.byu.cs.tweeter.server.dao.pojobeans.UserTableBean;
 import edu.byu.cs.tweeter.util.FakeData;
 
-public class UserService {
+public class UserService extends KingService {
 
 
-    private DAOFactoryInterface factoryInterface;
 
     public UserService(DAOFactoryInterface factoryInterface){
-        this.factoryInterface = factoryInterface;
+        super(factoryInterface);
     }
 
     public LoginResponse login(LoginRequest request) {
@@ -92,9 +91,9 @@ public class UserService {
     }
 
     public GetUserResponse getUser(GetUserRequest request){
-        // if (!checkValidAuth(request.getAuthToken().getToken())){
-        //   return new GetUserResponse("AuthToken Expired, please log in again");
-        //}
+        if (!checkValidAuth(request.getAuthToken().getToken())){
+          return new GetUserResponse("AuthToken Expired, please log in again");
+        }
         if (request.getAlias() == null){
             throw new RuntimeException("[Bad Request] Missing the Alias");
         }

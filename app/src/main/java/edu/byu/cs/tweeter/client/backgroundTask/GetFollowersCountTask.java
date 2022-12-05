@@ -21,7 +21,7 @@ public class GetFollowersCountTask extends GetCountTask {
     private User user;
     private AuthToken authToken;
     private static final String LOG_TAG = "GetFollowerCount";
-    public static final String COUNT_KEY = "count";
+    public static final String COUNT_KEY_FOLLOW = "count";
     public static final String AUTH_TOKEN_KEY = "auth-token";
 
     private int count;
@@ -58,7 +58,7 @@ public class GetFollowersCountTask extends GetCountTask {
     }
 
     protected void loadSuccessBundle(Bundle msgBundle){
-        msgBundle.putSerializable(COUNT_KEY, this.count);
+        msgBundle.putSerializable(COUNT_KEY_FOLLOW, this.count);
         msgBundle.putSerializable(AUTH_TOKEN_KEY, this.authToken);
     }
 }

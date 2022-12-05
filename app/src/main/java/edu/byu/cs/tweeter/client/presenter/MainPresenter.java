@@ -176,9 +176,9 @@ public class MainPresenter extends Presenter  {
                 }
 
                 @Override
-                public void handleSuccess(String followNum) {
+                public void handleSuccess(String followNum, String followerNum) {
                     view.setFollowingText(followNum);
-                    view.setFollowerText(followNum);
+                    view.setFollowerText(followerNum);
                 }
             });
             setFollowingButton(false);
@@ -197,9 +197,9 @@ public class MainPresenter extends Presenter  {
         }
 
         @Override
-        public void handleSuccess(String followNum) {
+        public void handleSuccess(String followNum, String followerNum) {
             view.setFollowingText(followNum);
-            view.setFollowerText(followNum);
+            view.setFollowerText(followerNum);
         }
     }
 }

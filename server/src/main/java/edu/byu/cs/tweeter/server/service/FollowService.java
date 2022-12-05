@@ -20,13 +20,12 @@ import edu.byu.cs.tweeter.util.Pair;
 /**
  * Contains the business logic for getting the users a user is following.
  */
-public class FollowService {
+public class FollowService extends KingService {
 
-    private DAOFactoryInterface factoryInterface;
 
 
     public FollowService(DAOFactoryInterface factoryInterface){
-        this.factoryInterface = factoryInterface;
+        super(factoryInterface);
     }
     /**
      * Returns the users that the user specified in the request is following. Uses information in
@@ -87,7 +86,14 @@ public class FollowService {
         if (!success){
             return new FollowResponse("FAILED TO UPDATE THE FOLLOW COUNT IN USER DAO");
         }
-        return factoryInterface.getFollowDAO().followUser(request);
+        //Add the follower row to the table
+        else{
+            FollowResponse response = factoryInterface.getFollowDAO().followUser(new FollowRequest(request.getAuthToken(), request.getFollowee(), request.getCurrentUser()));
+            if (response.isSuccess()){
+                return response;
+            }
+        }
+        return new FollowResponse("Failed to add the user to the table");
     }
 
     public UnfollowResponse unFollowUser(UnfollowRequest request){

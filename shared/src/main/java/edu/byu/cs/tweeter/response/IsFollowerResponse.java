@@ -8,7 +8,7 @@ import edu.byu.cs.tweeter.request.LoginRequest;
  */
 public class IsFollowerResponse extends Response {
 
-    private boolean isFollower;
+    private boolean follower;
     private AuthToken authToken;
 
     /**
@@ -20,24 +20,18 @@ public class IsFollowerResponse extends Response {
         super(false, message);
     }
 
-    /**
-     * Creates a response indicating that the corresponding request was successful.
-     *
-     * @param user the now logged in user.
-     * @param authToken the auth token representing this user's session with the server.
-     */
-    public IsFollowerResponse(boolean isFollower, AuthToken authToken) {
+    public IsFollowerResponse(boolean follower, AuthToken authToken) {
         super(true, null);
-        this.isFollower = isFollower;
+        this.follower = follower;
         this.authToken = authToken;
     }
 
-    public boolean isFollower() {
-        return isFollower;
+    public boolean getfollower() {
+        return follower;
     }
 
-    public void setFollower(boolean follower) {
-        isFollower = follower;
+    public void setfollower(boolean follower) {
+        follower = follower;
     }
 
     public void setAuthToken(AuthToken authToken) {

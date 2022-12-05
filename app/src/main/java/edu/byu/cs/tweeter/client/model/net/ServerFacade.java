@@ -102,7 +102,8 @@ public class ServerFacade {
     }
 
     public IsFollowerResponse isFollower(IsFollowerRequest request, String urlPath) throws IOException, TweeterRemoteException {
-        return clientCommunicator.doPost(urlPath, request, null , IsFollowerResponse.class);
+        IsFollowerResponse response = clientCommunicator.doPost(urlPath, request, null , IsFollowerResponse.class);
+        return response;
     }
 
     public FollowResponse followUser(FollowRequest request, String urlPath)

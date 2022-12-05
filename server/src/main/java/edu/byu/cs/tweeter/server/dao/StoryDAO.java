@@ -86,16 +86,15 @@ public class StoryDAO extends KingDAO implements StatusDAOInterface {
                     .limit(request.getLimit())
                     .collect(Collectors.toList());
 
-            // List<Status> alLStatus = getFakeData().getFakeStatuses();
             List<Status> responseStatuses = new ArrayList<>(request.getLimit());
-
-            for (StoryTableBean story : allStories){
-               // Date date = new Date(story.getTime_stamp());
+            if (allStories.size() > 0){
+            for (StoryTableBean story : allStories) {
+                // Date date = new Date(story.getTime_stamp());
                 responseStatuses.add(new Status(story.getPost(), DateTime.now().toString(), story.getUrls(), story.getMentions()));
+            }
 
             }
             boolean hasMorePages = responseStatuses.size() == request.getLimit();
-            System.out.println(responseStatuses.get(0).post);
             return new Pair<>(responseStatuses, hasMorePages);
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,31 +106,6 @@ public class StoryDAO extends KingDAO implements StatusDAOInterface {
         return (s != null && s.length() > 0);
     }
 
-
-    public FeedResponse getFeed(FeedRequest request) {
-        // TODO: Generates dummy data. Replace with a real implementation.
-        assert request.getLimit() > 0;
-        assert request.getLastStatusString() != null;
-
-        List<Status> alLStatus = getFakeData().getFakeStatuses();
-        List<Status> responseStatuses = new ArrayList<>(request.getLimit());
-
-        boolean hasMorePages = false;
-
-        if(request.getLimit() > 0) {
-            if (alLStatus != null) {
-                int followeesIndex = getFolloweesStartingIndex(request.getLastStatusString(), alLStatus);
-
-                for(int limitCounter = 0; followeesIndex < alLStatus.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
-                    responseStatuses.add(alLStatus.get(followeesIndex));
-                }
-
-                hasMorePages = followeesIndex < alLStatus.size();
-            }
-        }
-
-        return new FeedResponse(responseStatuses, hasMorePages);
-    }
 
     public PostStatusResponse postStatus(PostStatusRequest request){
         assert request.getStatus() != null;

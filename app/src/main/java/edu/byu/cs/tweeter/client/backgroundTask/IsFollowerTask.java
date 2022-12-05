@@ -31,7 +31,7 @@ public class IsFollowerTask extends AuthenticatedTask {
      */
     private final User followee;
 
-    private boolean isFollower;
+    private boolean follower;
     private AuthToken authToken;
 
     public IsFollowerTask(AuthToken authToken, User currentUser, User followee, Handler messageHandler) {
@@ -45,10 +45,11 @@ public class IsFollowerTask extends AuthenticatedTask {
         try {
 
             IsFollowerRequest request = new IsFollowerRequest(authToken, currentUser, followee);
+            System.out.println("INSIDE OTHER HUNK OF JUNK + " + request.getCurrentUser().getAlias() + " " + request.getFollowee().getAlias());
             IsFollowerResponse response = serverFacade.isFollower(request, FollowService.URL_IS_FOLLOWER);
 
             if (response.isSuccess()) {
-                isFollower = response.isFollower();
+                System.out.println("INSIDE THIS HUNK OF JUNK " + follower);
                 authToken = response.getAuthToken();
                 sendSuccessMessage();
             } else {
@@ -62,6 +63,6 @@ public class IsFollowerTask extends AuthenticatedTask {
 
     @Override
     protected void loadSuccessBundle(Bundle msgBundle) {
-        msgBundle.putBoolean(IS_FOLLOWER_KEY, isFollower);
+        msgBundle.putBoolean(IS_FOLLOWER_KEY, follower);
     }
 }

@@ -16,7 +16,7 @@ import edu.byu.cs.tweeter.request.FollowingCountRequest;
 /**
  * Background task that queries how many other users a specified user is following.
  */
-public class   GetFollowingCountTask extends GetCountTask {
+public class  GetFollowingCountTask extends GetCountTask {
 
     private int count;
     private User user;

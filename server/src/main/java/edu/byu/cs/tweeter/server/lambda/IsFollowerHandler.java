@@ -15,6 +15,7 @@ public class IsFollowerHandler extends KingHandler implements RequestHandler<IsF
     @Override
     public IsFollowerResponse handleRequest(IsFollowerRequest loginRequest, Context context) {
         FollowService followService = new FollowService(getFactoryInterface());
-        return followService.isFollowerResponse(loginRequest);
+        IsFollowerResponse response = followService.isFollowerResponse(loginRequest);
+        return response;
     }
 }
