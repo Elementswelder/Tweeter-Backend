@@ -49,8 +49,8 @@ public class IsFollowerTask extends AuthenticatedTask {
             IsFollowerResponse response = serverFacade.isFollower(request, FollowService.URL_IS_FOLLOWER);
 
             if (response.isSuccess()) {
+                this.follower = response.isFollower();
                 System.out.println("INSIDE THIS HUNK OF JUNK " + follower);
-                authToken = response.getAuthToken();
                 sendSuccessMessage();
             } else {
                 sendFailedMessage(response.getMessage());

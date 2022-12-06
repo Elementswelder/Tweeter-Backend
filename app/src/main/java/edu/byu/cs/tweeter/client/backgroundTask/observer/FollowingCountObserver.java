@@ -1,5 +1,5 @@
 package edu.byu.cs.tweeter.client.backgroundTask.observer;
 
-public interface FollowCountObserver extends ServiceObserver {
+public interface FollowingCountObserver extends ServiceObserver {
     void handleSuccess(String followNum);
 }

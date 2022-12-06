@@ -5,6 +5,7 @@ import android.view.MenuItem;
 import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.client.backgroundTask.observer.FollowCountObserver;
 import edu.byu.cs.tweeter.client.backgroundTask.observer.FollowerObserver;
+import edu.byu.cs.tweeter.client.backgroundTask.observer.FollowingCountObserver;
 import edu.byu.cs.tweeter.client.backgroundTask.observer.SimpleNotifyObserver;
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.model.domain.User;
@@ -51,7 +52,8 @@ public class MainPresenter extends Presenter  {
 
                 @Override
                 public void handleSuccess() {
-                    followService.updateSelectedUserFollowingAndFollowers(selectedUser, new MyFollowCountObserver());
+                    followService.updateFollowerCount(selectedUser, new MyFollowCountObserver());
+                    followService.updateFollowingCount(selectedUser, new MyFollowingCountObserver());
                 }
             });
             setFollowingButton(true);
@@ -64,7 +66,8 @@ public class MainPresenter extends Presenter  {
     }
 
     public void updateSelectedUserFollowingAndFollowers(User user) {
-        followService.updateSelectedUserFollowingAndFollowers(user, new MyFollowCountObserver());
+        followService.updateFollowerCount(user, new MyFollowCountObserver());
+        followService.updateFollowingCount(user, new MyFollowingCountObserver());
     }
 
     public void createNewStatus(String post) {
@@ -164,7 +167,7 @@ public class MainPresenter extends Presenter  {
         @Override
         public void handleSuccess() {
             view.setFollowerButton(false);
-            followService.updateSelectedUserFollowingAndFollowers(selectedUser, new FollowCountObserver() {
+            followService.updateFollowerCount(selectedUser, new FollowCountObserver() {
                 @Override
                 public void handleFailure(String message) {
                     view.displayMessage("Failed to get following: " + message);
@@ -176,9 +179,24 @@ public class MainPresenter extends Presenter  {
                 }
 
                 @Override
-                public void handleSuccess(String followNum, String followerNum) {
+                public void handleSuccess(String followNum) {
+                    view.setFollowerText(followNum);
+                }
+            });
+            followService.updateFollowingCount(selectedUser, new FollowingCountObserver() {
+                @Override
+                public void handleFailure(String message) {
+                    view.displayMessage("Failed to get following: " + message);
+                }
+
+                @Override
+                public void handleException(Exception exception) {
+                    view.displayMessage("Failed to get following because of exception: " + exception.getMessage());
+                }
+
+                @Override
+                public void handleSuccess(String followNum) {
                     view.setFollowingText(followNum);
-                    view.setFollowerText(followerNum);
                 }
             });
             setFollowingButton(false);
@@ -197,9 +215,25 @@ public class MainPresenter extends Presenter  {
         }
 
         @Override
-        public void handleSuccess(String followNum, String followerNum) {
+        public void handleSuccess(String followNum) {
+            view.setFollowerText(followNum);
+        }
+    }
+
+    private class MyFollowingCountObserver implements FollowingCountObserver {
+        @Override
+        public void handleFailure(String message) {
+            view.displayMessage("Failed to get following: " + message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.displayMessage("Failed to get following because of exception: " + exception.getMessage());
+        }
+
+        @Override
+        public void handleSuccess(String followNum) {
             view.setFollowingText(followNum);
-            view.setFollowerText(followerNum);
         }
     }
 }

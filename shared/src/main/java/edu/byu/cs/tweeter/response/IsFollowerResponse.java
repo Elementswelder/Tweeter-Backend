@@ -1,6 +1,5 @@
 package edu.byu.cs.tweeter.response;
 
-import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.request.LoginRequest;
 
 /**
@@ -8,42 +7,23 @@ import edu.byu.cs.tweeter.request.LoginRequest;
  */
 public class IsFollowerResponse extends Response {
 
-    private boolean follower;
-    private AuthToken authToken;
+    boolean follower;
 
-    /**
-     * Creates a response indicating that the corresponding request was unsuccessful.
-     *
-     * @param message a message describing why the request was unsuccessful.
-     */
+    public boolean isFollower() {
+        return follower;
+    }
+
+    public void setFollower(boolean follower) {
+        this.follower = follower;
+    }
+
     public IsFollowerResponse(String message) {
         super(false, message);
     }
 
-    public IsFollowerResponse(boolean follower, AuthToken authToken) {
+    public IsFollowerResponse(boolean follower) {
         super(true, null);
         this.follower = follower;
-        this.authToken = authToken;
-    }
-
-    public boolean getfollower() {
-        return follower;
-    }
-
-    public void setfollower(boolean follower) {
-        follower = follower;
-    }
-
-    public void setAuthToken(AuthToken authToken) {
-        this.authToken = authToken;
-    }
-
-    /**
-     * Returns the auth token.
-     *
-     * @return the auth token.
-     */
-    public AuthToken getAuthToken() {
-        return authToken;
     }
 }
+

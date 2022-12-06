@@ -61,15 +61,15 @@ public class FollowDAO extends KingDAO implements FollowDAOInterface {
                 FollowsTableBean tableBean = table.getItem(key);
                 if (tableBean == null){
                     System.out.println("false");
-                    return new IsFollowerResponse(false, request.getAuthToken());
+                    return new IsFollowerResponse(false);
                 }
                 else {
                     System.out.println("YES HE IS A FOLLOWER");
-                    return new IsFollowerResponse(true, request.getAuthToken());
+                    return new IsFollowerResponse(true);
                 }
             } catch (NullPointerException ex){
                 ex.printStackTrace();
-                return new IsFollowerResponse(false, request.getAuthToken());
+                return new IsFollowerResponse(false);
             }
         } catch (Exception ex){
             ex.printStackTrace();

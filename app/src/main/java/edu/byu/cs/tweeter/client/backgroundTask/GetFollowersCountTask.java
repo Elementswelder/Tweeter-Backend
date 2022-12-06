@@ -21,10 +21,10 @@ public class GetFollowersCountTask extends GetCountTask {
     private User user;
     private AuthToken authToken;
     private static final String LOG_TAG = "GetFollowerCount";
-    public static final String COUNT_KEY_FOLLOW = "count";
+    public static final String COUNT_KEY = "count";
     public static final String AUTH_TOKEN_KEY = "auth-token";
 
-    private int count;
+    private int followerCount;
 
     public GetFollowersCountTask(AuthToken authToken, User targetUser, Handler messageHandler) {
         super(authToken, targetUser, messageHandler);
@@ -34,7 +34,7 @@ public class GetFollowersCountTask extends GetCountTask {
 
     @Override
     protected int runCountTask() {
-        return count;
+        return followerCount;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class GetFollowersCountTask extends GetCountTask {
             FollowerCountResponse response = serverFacade.getFollowerCount(request, FollowService.URL_GET_FOLLOWER_COUNT);
 
             if (response.isSuccess()) {
-                count = response.getCount();
+                followerCount = response.getCount();
                 authToken = response.getAuthToken();
                 sendSuccessMessage();
             } else {
@@ -58,7 +58,7 @@ public class GetFollowersCountTask extends GetCountTask {
     }
 
     protected void loadSuccessBundle(Bundle msgBundle){
-        msgBundle.putSerializable(COUNT_KEY_FOLLOW, this.count);
+        msgBundle.putSerializable(COUNT_KEY, this.followerCount);
         msgBundle.putSerializable(AUTH_TOKEN_KEY, this.authToken);
     }
 }

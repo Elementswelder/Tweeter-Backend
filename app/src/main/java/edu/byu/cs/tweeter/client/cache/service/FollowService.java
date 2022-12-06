@@ -9,6 +9,7 @@ import edu.byu.cs.tweeter.client.backgroundTask.GetFollowingTask;
 import edu.byu.cs.tweeter.client.backgroundTask.GetUserTask;
 import edu.byu.cs.tweeter.client.backgroundTask.Handlers.FollowCountHandler;
 import edu.byu.cs.tweeter.client.backgroundTask.Handlers.FollowerHandler;
+import edu.byu.cs.tweeter.client.backgroundTask.Handlers.FollowingCountHandler;
 import edu.byu.cs.tweeter.client.backgroundTask.Handlers.GetSingleUserHandler;
 import edu.byu.cs.tweeter.client.backgroundTask.Handlers.PagedNotificationHandler;
 import edu.byu.cs.tweeter.client.backgroundTask.Handlers.SimpleNotificationHandler;
@@ -16,6 +17,7 @@ import edu.byu.cs.tweeter.client.backgroundTask.IsFollowerTask;
 import edu.byu.cs.tweeter.client.backgroundTask.UnfollowTask;
 import edu.byu.cs.tweeter.client.backgroundTask.observer.FollowCountObserver;
 import edu.byu.cs.tweeter.client.backgroundTask.observer.FollowerObserver;
+import edu.byu.cs.tweeter.client.backgroundTask.observer.FollowingCountObserver;
 import edu.byu.cs.tweeter.client.backgroundTask.observer.GetSingleUserObserver;
 import edu.byu.cs.tweeter.client.backgroundTask.observer.PagedObserver;
 import edu.byu.cs.tweeter.client.backgroundTask.observer.SimpleNotifyObserver;
@@ -79,13 +81,14 @@ public class FollowService extends ServiceHandler<Runnable>{
         startTask(unfollowTask);
     }
 
-    public void updateSelectedUserFollowingAndFollowers(User selectedUser, FollowCountObserver observer) {
-        GetFollowingCountTask followingCountTask = new GetFollowingCountTask(Cache.getInstance().getCurrUserAuthToken(),
-                selectedUser, new FollowCountHandler(observer));
-        startTask(followingCountTask);
-
+    public void updateFollowerCount(User selectedUser, FollowCountObserver observer) {
         GetFollowersCountTask followersCountTask = new GetFollowersCountTask(Cache.getInstance().getCurrUserAuthToken(),
                 selectedUser, new FollowCountHandler(observer));
         startTask(followersCountTask);
+    }
+    public void updateFollowingCount(User selectedUser, FollowingCountObserver observer) {
+        GetFollowingCountTask followingCountTask = new GetFollowingCountTask(Cache.getInstance().getCurrUserAuthToken(),
+                selectedUser, new FollowingCountHandler(observer));
+        startTask(followingCountTask);
     }
 }
