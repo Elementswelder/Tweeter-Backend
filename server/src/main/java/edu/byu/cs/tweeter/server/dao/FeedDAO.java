@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.byu.cs.tweeter.model.domain.Status;
+import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.request.FeedRequest;
 import edu.byu.cs.tweeter.server.dao.interfaces.FeedDAOInterface;
 import edu.byu.cs.tweeter.server.dao.pojobeans.FeedTableBean;
@@ -25,6 +26,8 @@ public class FeedDAO extends KingDAO implements FeedDAOInterface {
         assert request.getLastStatusString() != null;
 
         try {
+            System.out.println("Inside GetFeed");
+            System.out.println("User is " + request.getFollowerAlias());
             DynamoDbTable<FeedTableBean> feedTable = getDbClient().table("FeedTable", TableSchema.fromBean(FeedTableBean.class));
 
             QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
@@ -56,7 +59,8 @@ public class FeedDAO extends KingDAO implements FeedDAOInterface {
             for (FeedTableBean story : allStories){
                 // Date date = new Date(story.getTime_stamp());
                 System.out.println("adding story");
-                responseStatuses.add(new Status(story.getPost(), DateTime.now().toString(), story.getUrls(), story.getMentions()));
+                User newUser = new User("", "" ,story.getUser_alias(), "");
+                responseStatuses.add(new Status(story.getPost(), newUser, DateTime.now().toString(), story.getUrls(), story.getMentions()));
                 System.out.println("adding story done");
             }
             boolean hasMorePages = responseStatuses.size() == request.getLimit();
@@ -65,6 +69,29 @@ public class FeedDAO extends KingDAO implements FeedDAOInterface {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+
+
+
+
+    }
+
+    @Override
+    public boolean addFeedItem(Status status, List<User> followers) {
+        System.out.println("Inside addFeedItem");
+        try {
+            DynamoDbTable<FeedTableBean> feedTable = getDbClient().table("FeedTable", TableSchema.fromBean(FeedTableBean.class));
+
+            for (int i = 0; i < followers.size(); i++){
+                FeedTableBean feedPost = new FeedTableBean(status.getPost(), status.getDatetime(), status.getUrls(),
+                        status.getMentions(), status.getUser().getAlias(), followers.get(i).getAlias());
+                System.out.println("adding story num: " + i);
+                feedTable.putItem(feedPost);
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

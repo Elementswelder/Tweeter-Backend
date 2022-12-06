@@ -3,6 +3,8 @@ package edu.byu.cs.tweeter.server.service;
 import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.Status;
+import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.request.FollowersRequest;
 import edu.byu.cs.tweeter.request.GetUserRequest;
 import edu.byu.cs.tweeter.response.FeedResponse;
 import edu.byu.cs.tweeter.response.GetUserResponse;
@@ -70,6 +72,11 @@ public class StatusService extends KingService{
         if (list == null){
             return new FeedResponse("FAILED TO GET FEED IN THE GETFEED");
         }
+        for (int i = 0; i < list.getFirst().size(); i++){
+            GetUserResponse response = factoryInterface.getUserDAO().getUser(
+                    new GetUserRequest(request.getAuthToken(), list.getFirst().get(i).getUser().getAlias()));
+            list.getFirst().get(i).setUser(response.getUser());
+        }
         return new FeedResponse(list.getFirst(), list.getSecond());
     }
 
@@ -77,7 +84,19 @@ public class StatusService extends KingService{
         if (request.getStatus() == null){
             throw new RuntimeException("[Bad Request] Request needs to have a completed status");
         }
-        return factoryInterface.getStatusDAO().postStatus(request);
+        PostStatusResponse response = factoryInterface.getStatusDAO().postStatus(request);
+        if (!response.isSuccess()) {
+            return new PostStatusResponse("Unable to add a status to the databse");
+        }
+        Pair<List<User>, Boolean> followers = factoryInterface.getFollowDAO().getFollowers(
+                new FollowersRequest(request.getAuthToken(), request.getStatus().getUser().getAlias(),
+                        100000, ""));
+
+        boolean success = factoryInterface.getFeedDAO().addFeedItem(request.getStatus(),followers.getFirst());
+        if (!success){
+            return new PostStatusResponse("Unable to add the status to the followers database");
+        }
+        return response;
     }
 
     StoryDAO getStatusDAO() {

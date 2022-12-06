@@ -14,18 +14,30 @@ public class FeedTableBean {
     public List<String> urls;
     public List<String> mentions;
     public String user_alias;
+    public String user_feed;
+
 
     public FeedTableBean(){}
 
-    public FeedTableBean(String post, String time_stamp, List<String> urls, List<String> mentions, String user_alias) {
+    public FeedTableBean(String post, String time_stamp, List<String> urls, List<String> mentions,
+                         String user_alias,String user_feed) {
         this.post = post;
         this.time_stamp = time_stamp;
         this.urls = urls;
         this.mentions = mentions;
         this.user_alias = user_alias;
+        this.user_feed = user_feed;
     }
 
     @DynamoDbPartitionKey
+    public String getUser_feed() {
+        return user_feed;
+    }
+
+    public void setUser_feed(String user_feed) {
+        this.user_feed = user_feed;
+    }
+
     public String getUser_alias() {
         return user_alias;
     }

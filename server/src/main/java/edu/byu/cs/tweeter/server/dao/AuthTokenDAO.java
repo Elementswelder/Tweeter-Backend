@@ -14,12 +14,12 @@ public class AuthTokenDAO extends KingDAO implements AuthTokenDAOInterface {
     private final String EXPIRE_TIME = "11/11/1 11:11:01";
 
     @Override
-    public boolean addAuthToken(String auth_token, String date, String alias) {
+    public boolean addAuthToken(String authtoken, String date, String alias) {
         try {
             System.out.println("Trying to get into dynamo tables - AuthTokenDAO");
             DynamoDbTable<AuthTokenBean> authDynamoDbTable = getDbClient().table("AuthTokenTable", TableSchema.fromBean(AuthTokenBean.class));
 
-            AuthTokenBean authToken =  new AuthTokenBean(auth_token, date, alias);
+            AuthTokenBean authToken =  new AuthTokenBean(authtoken, date, alias);
             authDynamoDbTable.putItem(authToken);
 
         } catch (Exception ex){
