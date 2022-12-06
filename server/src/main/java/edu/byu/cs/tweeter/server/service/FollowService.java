@@ -37,9 +37,9 @@ public class FollowService extends KingService {
      * @return the followees.
      */
     public FollowingResponse getFollowees(FollowingRequest request) {
-        // if (!checkValidAuth(request.getAuthToken().getToken())){
-        //   return new GetUserResponse("AuthToken Expired, please log in again");
-        //}
+        if (!checkValidAuth(request.getAuthToken().getToken())){
+         return new FollowingResponse("AuthToken Expired, please log in again");
+        }
 
         if (request.getFollowerAlias() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have a follower alias");
@@ -55,9 +55,9 @@ public class FollowService extends KingService {
     }
 
     public FollowerResponse getFollowers(FollowersRequest request) {
-        // if (!checkValidAuth(request.getAuthToken().getToken())){
-        //   return new GetUserResponse("AuthToken Expired, please log in again");
-        //}
+        if (!checkValidAuth(request.getAuthToken().getToken())){
+          return new FollowerResponse("AuthToken Expired, please log in again");
+        }
         if (request.getFollowerAlias() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have a follower alias");
         } else if (request.getLimit() <= 0) {
@@ -72,16 +72,16 @@ public class FollowService extends KingService {
 
 
     public IsFollowerResponse isFollowerResponse(IsFollowerRequest request){
-        // if (!checkValidAuth(request.getAuthToken().getToken())){
-        //   return new GetUserResponse("AuthToken Expired, please log in again");
-        //}
+       // if (!checkValidAuth(request.getAuthToken().getToken())){
+      //    return new IsFollowerResponse("AuthToken Expired, please log in again");
+      //  }
         return factoryInterface.getFollowDAO().isFollower(request);
     }
 
     public FollowResponse followUser(FollowRequest request){
-        // if (!checkValidAuth(request.getAuthToken().getToken())){
-        //   return new GetUserResponse("AuthToken Expired, please log in again");
-        //}
+        //if (!checkValidAuth(request.getAuthToken().getToken())){
+      //       return new FollowResponse("AuthToken Expired, please log in again");
+       // }
         boolean success = factoryInterface.getUserDAO().updateFollowCount(request.getCurrentUser(), request.getFollowee(), true);
         if (!success){
             return new FollowResponse("FAILED TO UPDATE THE FOLLOW COUNT IN USER DAO");
@@ -97,9 +97,9 @@ public class FollowService extends KingService {
     }
 
     public UnfollowResponse unFollowUser(UnfollowRequest request){
-        // if (!checkValidAuth(request.getAuthToken().getToken())){
-        //   return new GetUserResponse("AuthToken Expired, please log in again");
-        //}
+        if (!checkValidAuth(request.getAuthToken().getToken())){
+            return new UnfollowResponse("AuthToken Expired, please log in again");
+        }
         boolean success = factoryInterface.getUserDAO().updateFollowCount(request.getCurrentUser(), request.getFollowee(), false);
         if (!success){
             return new UnfollowResponse("FAILED TO UPDATE THE FOLLOW COUNT IN USER DAO");

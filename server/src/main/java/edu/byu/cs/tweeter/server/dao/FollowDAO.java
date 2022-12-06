@@ -56,8 +56,8 @@ public class FollowDAO extends KingDAO implements FollowDAOInterface {
             System.out.println("Follower: " + request.getCurrentUser().getAlias() + " Followee: " + request.getFollowee().getAlias());
             DynamoDbTable<FollowsTableBean> table = getDbClient().table("follows", TableSchema.fromBean(FollowsTableBean.class));
             try {
-                Key key = Key.builder().partitionValue(request.getFollowee().getAlias())
-                        .sortValue(request.getCurrentUser().getAlias()).build();
+                Key key = Key.builder().partitionValue(request.getCurrentUser().getAlias())
+                        .sortValue(request.getFollowee().getAlias()).build();
                 FollowsTableBean tableBean = table.getItem(key);
                 if (tableBean == null){
                     System.out.println("false");

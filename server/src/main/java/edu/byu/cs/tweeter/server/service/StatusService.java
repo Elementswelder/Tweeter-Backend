@@ -7,6 +7,7 @@ import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.request.FollowersRequest;
 import edu.byu.cs.tweeter.request.GetUserRequest;
 import edu.byu.cs.tweeter.response.FeedResponse;
+import edu.byu.cs.tweeter.response.FollowerCountResponse;
 import edu.byu.cs.tweeter.response.GetUserResponse;
 import edu.byu.cs.tweeter.response.PostStatusResponse;
 import edu.byu.cs.tweeter.response.StatusResponse;
@@ -39,6 +40,9 @@ public class StatusService extends KingService{
      * @return the followees.
      */
     public StatusResponse getStatuses(StatusRequest request) {
+        if (!checkValidAuth(request.getAuthToken().getToken())){
+            return new StatusResponse("AuthToken Expired, please log in again");
+        }
         if (request.getLastStatusTime() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have a follower alias");
         } else if (request.getLimit() <= 0) {
@@ -62,6 +66,9 @@ public class StatusService extends KingService{
     }
 
     public FeedResponse getFeed(FeedRequest request) {
+        if (!checkValidAuth(request.getAuthToken().getToken())){
+            return new FeedResponse("AuthToken Expired, please log in again");
+        }
         if (request.getLastStatusString() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have a follower alias");
         } else if (request.getLimit() <= 0) {
@@ -81,6 +88,9 @@ public class StatusService extends KingService{
     }
 
     public PostStatusResponse postStatus(PostStatusRequest request){
+        if (!checkValidAuth(request.getAuthToken().getToken())){
+            return new PostStatusResponse("AuthToken Expired, please log in again");
+        }
         if (request.getStatus() == null){
             throw new RuntimeException("[Bad Request] Request needs to have a completed status");
         }
@@ -102,6 +112,4 @@ public class StatusService extends KingService{
     StoryDAO getStatusDAO() {
         return new StoryDAO();
     }
-
-    FakeData getFakeData() {return FakeData.getInstance();}
 }

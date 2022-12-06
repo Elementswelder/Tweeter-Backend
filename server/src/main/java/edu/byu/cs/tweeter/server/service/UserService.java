@@ -39,7 +39,6 @@ public class UserService extends KingService {
             throw new RuntimeException("[Bad Request] Missing a password");
         }
 
-        //UNCOMMENT ON RELEASE
        LoginResponse response = factoryInterface.getUserDAO().loginUser(request);
         if (response.isSuccess()){
             //If not added the authtoken to the table, fail the request
@@ -77,17 +76,24 @@ public class UserService extends KingService {
         else if (request.getImage() == null){
             throw new RuntimeException("[Bad Request] Missing Image");
         }
-        //HashPassword before continuing
-        request.setPassword(Hasher.generateStrongPasswordHash(request.getPassword()));
-        RegisterResponse response = factoryInterface.getUserDAO().registerUser(request);
-        //If response succeeds, then add the authtoken to the table with the date
-        if (response.isSuccess()){
-            //If not added the authtoken to the table, fail the request
-            if (!factoryInterface.getAuthTokenDAO().addAuthToken(response.getAuthToken().getToken(), response.getAuthToken().getDatetime(), request.getUsername())){
-                return new RegisterResponse("FAILED TO ADD AUTH TOKEN TO THE TABLE - REGISTER");
+        //Add image to the s3
+        boolean success = factoryInterface.getS3DAO().addImage(request.getImage(), request.getUsername());
+        if (success) {
+            //HashPassword before continuing
+            request.setPassword(Hasher.generateStrongPasswordHash(request.getPassword()));
+            RegisterResponse response = factoryInterface.getUserDAO().registerUser(request);
+            //If response succeeds, then add the authtoken to the table with the date
+            if (response.isSuccess()) {
+                //If not added the authtoken to the table, fail the request
+                if (!factoryInterface.getAuthTokenDAO().addAuthToken(response.getAuthToken().getToken(), response.getAuthToken().getDatetime(), request.getUsername())) {
+                    return new RegisterResponse("FAILED TO ADD AUTH TOKEN TO THE TABLE - REGISTER");
+                }
             }
+            return response;
         }
-        return response;
+        else {
+            return new RegisterResponse("FAILED TO ADD IMAGE TO S3 BUCKET");
+        }
     }
 
     public GetUserResponse getUser(GetUserRequest request){
@@ -105,24 +111,18 @@ public class UserService extends KingService {
     }
 
     public FollowingCountResponse getFollowingCount(FollowingCountRequest request) {
-        // if (!checkValidAuth(request.getAuthToken().getToken())){
-        //   return new FollowingCountResponse("AuthToken Expired, please log in again");
-        //}
+        if (!checkValidAuth(request.getAuthToken().getToken())){
+          return new FollowingCountResponse("AuthToken Expired, please log in again");
+        }
         return factoryInterface.getUserDAO().getFollowingCount(request);
     }
 
     //The people following the user;
     public FollowerCountResponse getFollowerCount(FollowerCountRequest request) {
-        // if (!checkValidAuth(request.getAuthToken().getToken())){
-        //   return new FollowingCountResponse("AuthToken Expired, please log in again");
-        //}
+        if (!checkValidAuth(request.getAuthToken().getToken())){
+          return new FollowerCountResponse("AuthToken Expired, please log in again");
+        }
         return factoryInterface.getUserDAO().getFollowerCount(request);
     }
 
-
-
-
-    FakeData getFakeData() {
-        return FakeData.getInstance();
-    }
 }

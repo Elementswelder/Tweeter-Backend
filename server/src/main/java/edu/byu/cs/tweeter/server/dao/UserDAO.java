@@ -43,21 +43,6 @@ public class UserDAO extends KingDAO implements UserDAOInterface {
 
     @Override
     public RegisterResponse registerUser(RegisterRequest request) {
-        System.out.println("Trying to upload to S3 Bucket");
-        try {
-            //Convert the image and push it as a public image
-            byte[] bytes = Base64.getDecoder().decode(request.getImage());
-            InputStream target = new ByteArrayInputStream(bytes);
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(bytes.length);
-            metadata.setContentType("image/png");
-            gets3Client().putObject(new PutObjectRequest(s3BucketName, request.getUsername(), target, metadata)
-                    .withCannedAcl(CannedAccessControlList.PublicRead));
-
-        } catch (Exception ex){
-            ex.printStackTrace();
-            return new RegisterResponse("FAILED TO PUT THE PHOTO IN S3");
-        }
         try {
             System.out.println("Trying to get into dynamo tables");
             DynamoDbTable<UserTableBean> followsDynamoDbTable = getDbClient().table("UserTable", TableSchema.fromBean(UserTableBean.class));
@@ -91,7 +76,7 @@ public class UserDAO extends KingDAO implements UserDAOInterface {
             ex.printStackTrace();
             return new LoginResponse("FAILED TO FIND A MATCHING USER IN THE DATABASE");
         }
-        return new LoginResponse("FAILED TO LOGIN - GENERIC USER-DAO");
+        return new LoginResponse("Failed to find a username/password match");
     }
 
 
