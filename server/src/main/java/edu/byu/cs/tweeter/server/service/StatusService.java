@@ -88,9 +88,9 @@ public class StatusService extends KingService{
     }
 
     public PostStatusResponse postStatus(PostStatusRequest request){
-        if (!checkValidAuth(request.getAuthToken().getToken())){
-            return new PostStatusResponse("AuthToken Expired, please log in again");
-        }
+       // if (!checkValidAuth(request.getAuthToken().getToken())){
+      //      return new PostStatusResponse("AuthToken Expired, please log in again");
+      //  }
         if (request.getStatus() == null){
             throw new RuntimeException("[Bad Request] Request needs to have a completed status");
         }

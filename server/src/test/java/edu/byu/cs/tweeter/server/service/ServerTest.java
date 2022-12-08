@@ -40,7 +40,7 @@ import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 public class ServerTest {
 
     public static void main(String args[]) throws ParseException {
-        testRegister();
+        testGetFollowers();
 
     }
 
@@ -115,7 +115,7 @@ public class ServerTest {
     }
 
     private static void testGetFollowers() {
-        FollowersRequest request = new FollowersRequest(new AuthToken("tes", "Test"), "@FreddyBoi", 10, "@cooldude");
+        FollowersRequest request = new FollowersRequest(new AuthToken("tes", "Test"), "@FreddyMan", 100, "");
 
         FollowDAO followDAO = new FollowDAO();
 

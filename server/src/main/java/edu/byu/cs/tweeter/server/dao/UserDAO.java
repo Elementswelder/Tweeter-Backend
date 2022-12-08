@@ -14,8 +14,10 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
@@ -35,6 +37,10 @@ import edu.byu.cs.tweeter.server.dao.pojobeans.UserTableBean;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.BatchWriteItemEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.BatchWriteResult;
+import software.amazon.awssdk.enhanced.dynamodb.model.WriteBatch;
+import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
 
 
 public class UserDAO extends KingDAO implements UserDAOInterface {
@@ -172,5 +178,60 @@ public class UserDAO extends KingDAO implements UserDAOInterface {
             return false;
         }
     }
+
+    public void addUserBatch(List<User> users) {
+        try {
+            List<UserTableBean> batchToWrite = new ArrayList<>();
+            for (User u : users) {
+                UserTableBean dto = new UserTableBean(u);
+                batchToWrite.add(dto);
+
+                if (batchToWrite.size() == 25) {
+                    // package this batch up and send to DynamoDB.
+                    writeChunkOfUserTableBeans(batchToWrite);
+                    batchToWrite = new ArrayList<>();
+                }
+            }
+
+            // write any remaining
+            if (batchToWrite.size() > 0) {
+                // package this batch up and send to DynamoDB.
+                writeChunkOfUserTableBeans(batchToWrite);
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    private void writeChunkOfUserTableBeans(List<UserTableBean> userDTOs) {
+        try {
+            if (userDTOs.size() > 25)
+                throw new RuntimeException("Too many users to write");
+
+            DynamoDbTable<UserTableBean> table = getDbClient().table("UserTable", TableSchema.fromBean(UserTableBean.class));
+            WriteBatch.Builder<UserTableBean> writeBuilder = WriteBatch.builder(UserTableBean.class).mappedTableResource(table);
+            for (UserTableBean item : userDTOs) {
+                writeBuilder.addPutItem(builder -> builder.item(item));
+            }
+            BatchWriteItemEnhancedRequest batchWriteItemEnhancedRequest = BatchWriteItemEnhancedRequest.builder()
+                    .writeBatches(writeBuilder.build()).build();
+
+            try {
+                BatchWriteResult result = getDbClient().batchWriteItem(batchWriteItemEnhancedRequest);
+
+                // just hammer dynamodb again with anything that didn't get written this time
+                if (result.unprocessedPutItemsForTable(table).size() > 0) {
+                    writeChunkOfUserTableBeans(result.unprocessedPutItemsForTable(table));
+                }
+
+            } catch (DynamoDbException e) {
+                System.err.println(e.getMessage());
+                System.exit(1);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
 }

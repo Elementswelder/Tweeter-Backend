@@ -2,6 +2,7 @@ package edu.byu.cs.tweeter.server.lambda;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.google.gson.Gson;
 
 import edu.byu.cs.tweeter.response.PostStatusResponse;
 import edu.byu.cs.tweeter.request.PostStatusRequest;
@@ -24,6 +25,9 @@ public class PostStatusHandler extends KingHandler implements RequestHandler<Pos
     @Override
     public PostStatusResponse handleRequest(PostStatusRequest request, Context context) {
         StatusService service = new StatusService(getFactoryInterface());
+        System.out.println(request.getStatus());
+        SqsClient.sendMessage(SqsClient.getPostStatusQueueUrl(),
+                new Gson().toJson(request));
         return service.postStatus(request);
     }
 }

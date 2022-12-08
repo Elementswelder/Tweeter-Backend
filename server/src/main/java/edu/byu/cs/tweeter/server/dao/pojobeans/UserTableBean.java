@@ -1,5 +1,6 @@
 package edu.byu.cs.tweeter.server.dao.pojobeans;
 
+import edu.byu.cs.tweeter.model.domain.User;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 
@@ -26,6 +27,13 @@ public class UserTableBean {
         this.password = password;
         this.followers = followers;
         this.following = following;
+    }
+
+    public UserTableBean(User u) {
+        this.alias = u.getAlias();
+        this.firstName = u.getFirstName();
+        this.lastName = u.getLastName();
+        this.image = u.getImageUrl();
     }
 
     @DynamoDbPartitionKey

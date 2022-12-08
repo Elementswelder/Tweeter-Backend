@@ -121,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
 
     @Override
     public void displayMessage(String message) {
+        System.out.println("FAILED TO DISPLAY TOAST?" + message);
         Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
     }
 
