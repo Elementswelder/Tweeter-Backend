@@ -43,14 +43,13 @@ public class PostUpdateFeedMessageHandler extends KingDAO implements RequestHand
                 int batchSize = 500;
                 while (results.hasNext()) {
                     String receiverAlias = results.next().getFollower_handle();
-                    FeedTableBean dto = new FeedTableBean(status.getPost(), DateTime.now().toString(),
+                    FeedTableBean feedTableItem = new FeedTableBean(status.getPost(), DateTime.now().toString(),
                             status.getUrls(), status.getMentions(), authorAlias, receiverAlias);
-                    feedTableList.add(dto);
+                    feedTableList.add(feedTableItem);
                     ++i;
                     if (i % batchSize == 0 && i != 0) {
-                        System.out.println("IN SIDE THE BATCH SIZE IF STATMENT POSTUPDATEMESSAHDNERonfsndf");
-                        FeedList feedDTOList = new FeedList(feedTableList);
-                        String body = new Gson().toJson(feedDTOList);
+                        FeedList feedList = new FeedList(feedTableList);
+                        String body = new Gson().toJson(feedList);
                         SqsClient.sendMessage(SqsClient.getUpdateFeedQueueUrl(), body);
                         feedTableList.clear();
                     }

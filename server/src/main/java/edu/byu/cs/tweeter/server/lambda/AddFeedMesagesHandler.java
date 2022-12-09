@@ -11,7 +11,7 @@ import edu.byu.cs.tweeter.server.dao.FeedList;
 import edu.byu.cs.tweeter.server.dao.pojobeans.FeedTableBean;
 import edu.byu.cs.tweeter.server.service.StatusService;
 
-public class AddFeedMesagesLambda extends KingHandler implements RequestHandler<SQSEvent, Void> {
+public class AddFeedMesagesHandler extends KingHandler implements RequestHandler<SQSEvent, Void> {
         @Override
         public Void handleRequest(SQSEvent event, Context context) {
             StatusService statusService = new StatusService(getFactoryInterface());
