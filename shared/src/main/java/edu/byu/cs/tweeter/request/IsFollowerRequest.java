@@ -10,15 +10,15 @@ public class IsFollowerRequest {
 
     private User currentUser;
     private User followee;
-    private AuthToken authToken;
+    private AuthToken auth_token;
 
     /**
      * Allows construction of the object from Json. Private so it won't be called in normal code.
      */
     private IsFollowerRequest() {}
 
-    public IsFollowerRequest(AuthToken authToken, User currentUser, User followee) {
-        this.authToken = authToken;
+    public IsFollowerRequest(AuthToken auth_token, User currentUser, User followee) {
+        this.auth_token = auth_token;
         this.followee = followee;
         this.currentUser = currentUser;
     }
@@ -41,11 +41,11 @@ public class IsFollowerRequest {
 
 
 
-    public AuthToken getAuthToken() {
-        return authToken;
+    public AuthToken getAuth_token() {
+        return auth_token;
     }
 
-    public void setAuthToken(AuthToken authToken) {
-        this.authToken = authToken;
+    public void setAuth_token(AuthToken auth_token) {
+        this.auth_token = auth_token;
     }
 }

@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
@@ -34,14 +35,66 @@ import edu.byu.cs.tweeter.server.dao.pojobeans.AuthTokenBean;
 import edu.byu.cs.tweeter.server.dao.pojobeans.FollowsTableBean;
 import edu.byu.cs.tweeter.server.lambda.KingHandler;
 import edu.byu.cs.tweeter.util.Pair;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.pagination.sync.SdkIterable;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbIndex;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.Page;
+import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 public class ServerTest {
 
-    public static void main(String args[]) throws ParseException {
-        testGetFollowers();
+    protected static DynamoDbClient dbClient;
+    protected static DynamoDbEnhancedClient enhancedClient;
 
+    public static void main(String args[]) throws ParseException {
+        testit();
+
+    }
+
+    private static void testit(){
+        DynamoDbIndex<FollowsTableBean> index = getDbClient().table("follows", TableSchema.fromBean(FollowsTableBean.class)).index("followIndex");
+        Key key = Key.builder()
+                .partitionValue("@FreddyBoi")
+                .build();
+        System.out.println("GET FOLLOWERS 1 out of 3 ");
+        QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
+                .queryConditional(QueryConditional.keyEqualTo(key)).limit(10000);
+        System.out.println("2 out of 3 ");
+        List<FollowsTableBean> allFollowers = new ArrayList<>();
+        QueryEnhancedRequest queryRequest = requestBuilder.build();
+        SdkIterable<Page<FollowsTableBean>> result = index.query(queryRequest);
+        PageIterable<FollowsTableBean> pages = PageIterable.create(result);
+
+        pages.stream().limit(1).forEach(followDTOPage -> followDTOPage.items().forEach(v -> allFollowers.add(v)));
+        List<User> followerAliases = new ArrayList<>();
+        System.out.println("tsefd");
+    }
+
+    public static DynamoDbEnhancedClient getDbClient(){
+        if (dbClient == null){
+            dbClient = DynamoDbClient.builder()
+                    .credentialsProvider(StaticCredentialsProvider.create(
+                            //Please don't steal them, thx
+                            AwsBasicCredentials.create("AKIASWZRQ2UG4NR5DWMA", "lKHSN+WX0+LN1ep3hbGA/aK/l8mJPF3gcavA4kOA")
+                    ))
+                    .region(Region.US_EAST_1)
+                    .build();
+
+            enhancedClient = DynamoDbEnhancedClient
+                    .builder()
+                    .dynamoDbClient(dbClient)
+                    .build();
+        }
+        return enhancedClient;
     }
 
     private static void testGetStory() {

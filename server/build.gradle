@@ -23,6 +23,7 @@ dependencies {
     implementation 'com.amazonaws:aws-java-sdk-sqs:1.12.358'
     implementation 'com.amazonaws:aws-java-sdk-sqs:1.12.359'
     implementation 'com.amazonaws:aws-lambda-java-events:3.11.0'
+    implementation 'com.amazonaws:aws-lambda-java-events:3.11.0'
 
 
     // Testing related dependencies

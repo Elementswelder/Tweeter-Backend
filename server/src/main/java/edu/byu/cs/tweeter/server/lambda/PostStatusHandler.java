@@ -27,7 +27,7 @@ public class PostStatusHandler extends KingHandler implements RequestHandler<Pos
         StatusService service = new StatusService(getFactoryInterface());
         System.out.println(request.getStatus());
         SqsClient.sendMessage(SqsClient.getPostStatusQueueUrl(),
-                new Gson().toJson(request));
+                new Gson().toJson(request.getStatus()));
         return service.postStatus(request);
     }
 }

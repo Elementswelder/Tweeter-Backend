@@ -5,10 +5,10 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class TheGreatTenGrand {
+public class TheGreatTenThousand {
     // How many follower users to add
     // We recommend you test this with a smaller number first, to make sure it works for you
-    private final static int NUM_USERS = 400;
+    private final static int NUM_USERS = 10000;
 
     // how many leading 0s we need on the user, based on how large NUM_USERS is
     private final static int NUM_PADDING = 5;
@@ -18,7 +18,7 @@ public class TheGreatTenGrand {
     private final static String FOLLOW_TARGET = "@FreddyMan";
 
     public static void main(String[] args) {
-        TheGreatTenGrand.fillDatabase();
+        TheGreatTenThousand.fillDatabase();
     }
 
     public static void fillDatabase() {
@@ -51,9 +51,9 @@ public class TheGreatTenGrand {
         }
 
         // Call the DAOs for the database logic
-       /* if (users.size() > 0) {
+        if (users.size() > 0) {
             userDAO.addUserBatch(users);
-        } */
+        }
         if (followers.size() > 0) {
             followDAO.addFollowersBatch(users);
         }

@@ -17,7 +17,6 @@ public class SqsClient {
 
         AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
         sqs.sendMessage(send_msg_request);
-        System.out.println("MESSAGE BODY: " + body);
     }
 
     public static String getPostStatusQueueUrl() {

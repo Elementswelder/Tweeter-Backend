@@ -1,5 +1,6 @@
 package edu.byu.cs.tweeter.server.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.Status;
@@ -7,7 +8,6 @@ import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.request.FollowersRequest;
 import edu.byu.cs.tweeter.request.GetUserRequest;
 import edu.byu.cs.tweeter.response.FeedResponse;
-import edu.byu.cs.tweeter.response.FollowerCountResponse;
 import edu.byu.cs.tweeter.response.GetUserResponse;
 import edu.byu.cs.tweeter.response.PostStatusResponse;
 import edu.byu.cs.tweeter.response.StatusResponse;
@@ -17,7 +17,8 @@ import edu.byu.cs.tweeter.request.StatusRequest;
 import edu.byu.cs.tweeter.server.dao.interfaces.DAOFactoryInterface;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
 import edu.byu.cs.tweeter.server.dao.StoryDAO;
-import edu.byu.cs.tweeter.util.FakeData;
+import edu.byu.cs.tweeter.server.dao.pojobeans.FeedTableBean;
+import edu.byu.cs.tweeter.server.dao.pojobeans.FollowsTableBean;
 import edu.byu.cs.tweeter.util.Pair;
 
 /**
@@ -108,6 +109,26 @@ public class StatusService extends KingService{
         }
         return response;
     }
+
+    public void addFeedBatch(List<FeedTableBean> feed) {
+        List<FeedTableBean> batchToWrite = new ArrayList<>();
+        for (FeedTableBean f : feed) {
+            batchToWrite.add(f);
+
+            if (batchToWrite.size() == 25) {
+                // package this batch up and send to DynamoDB.
+                factoryInterface.getFeedDAO().writeChunk(batchToWrite);
+                batchToWrite = new ArrayList<>();
+            }
+        }
+
+        // write any remaining
+        if (batchToWrite.size() > 0) {
+            // package this batch up and send to DynamoDB.
+            factoryInterface.getFeedDAO().writeChunk(batchToWrite);
+        }
+    }
+
 
     StoryDAO getStatusDAO() {
         return new StoryDAO();

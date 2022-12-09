@@ -27,27 +27,28 @@ public class PostUpdateFeedMessageHandler extends KingDAO implements RequestHand
         try {
             System.out.println("INSIDE POST UPDATEFEED HANDLER");
             for (SQSEvent.SQSMessage msg : event.getRecords()) {
-                PostStatusRequest status = null;
+                Status status = null;
                 try {
-                    status = new Gson().fromJson(msg.getBody(), PostStatusRequest.class);
+                    status = new Gson().fromJson(msg.getBody(), Status.class);
                 } catch (JsonSyntaxException | IllegalStateException e) {
                     e.printStackTrace();
                 }
                 System.out.println("Asserting that the status is not null");
                 assert status != null;
-                String authorAlias = status.getStatus().getUser().getAlias();
+                String authorAlias = status.getUser().getAlias();
                 DynamoDbTable<FollowsTableBean> followsTable = getDbClient().table("follows", TableSchema.fromBean(FollowsTableBean.class));
                 Iterator<FollowsTableBean> results = followsTable.scan().items().iterator();
                 List<FeedTableBean> feedTableList = new ArrayList<>();
                 int i = 0;
-                int batchSize = 1000;
+                int batchSize = 500;
                 while (results.hasNext()) {
-                    String receiverAlias = results.next().getFollowee_handle();
-                    FeedTableBean dto = new FeedTableBean(status.getStatus().getPost(), DateTime.now().toString(),
-                            status.getStatus().getUrls(), status.getStatus().getMentions(), authorAlias, receiverAlias);
+                    String receiverAlias = results.next().getFollower_handle();
+                    FeedTableBean dto = new FeedTableBean(status.getPost(), DateTime.now().toString(),
+                            status.getUrls(), status.getMentions(), authorAlias, receiverAlias);
                     feedTableList.add(dto);
                     ++i;
                     if (i % batchSize == 0 && i != 0) {
+                        System.out.println("IN SIDE THE BATCH SIZE IF STATMENT POSTUPDATEMESSAHDNERonfsndf");
                         FeedList feedDTOList = new FeedList(feedTableList);
                         String body = new Gson().toJson(feedDTOList);
                         SqsClient.sendMessage(SqsClient.getUpdateFeedQueueUrl(), body);
