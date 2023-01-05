@@ -119,6 +119,7 @@ public class StatusService extends KingService{
                 // package this batch up and send to DynamoDB.
                 factoryInterface.getFeedDAO().writeChunk(batchToWrite);
                 batchToWrite = new ArrayList<>();
+                //
             }
         }
 
